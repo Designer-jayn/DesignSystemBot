@@ -8,21 +8,24 @@ const namer = require('color-namer');
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 8080;
+// Railway 포트 설정 (없으면 8080)
+const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(bodyParser.json());
 
+// ---------------------------------------------------------
+// 📂 데이터베이스 설정 (프로젝트 저장용)
+// ---------------------------------------------------------
 const DATA_FILE = path.join(__dirname, 'database.json');
 if (!fs.existsSync(DATA_FILE)) {
     fs.writeFileSync(DATA_FILE, JSON.stringify({}));
 }
-
 const readData = () => JSON.parse(fs.readFileSync(DATA_FILE));
 const writeData = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2));
 
 // ---------------------------------------------------------
-// 🔥 [핵심] 사용 가능한 모델을 자동으로 찾는 변수
+// 🔥 [핵심] Gemini AI 모델 자동 검색
 // ---------------------------------------------------------
 let BEST_MODEL_URL = ""; 
 
@@ -52,70 +55,59 @@ const findBestModel = async () => {
             console.log("⚠️ 사용 가능한 Gemini 모델을 못 찾았습니다.");
         }
     } catch (e) {
-        console.log("⚠️ 모델 검색 실패 (키 문제일 수도 있음):", e.response ? e.response.data : e.message);
+        console.log("⚠️ 모델 검색 실패:", e.message);
     }
 };
-
 findBestModel();
 
-// --- [API 1: AI 네이밍] ---
+// ---------------------------------------------------------
+// 📡 API 라우트 (AI 기능들)
+// ---------------------------------------------------------
+
+// 1. AI 색상 이름 짓기
 app.post('/api/ai-naming', async (req, res) => {
     const { hex } = req.body;
-    console.log(`🎨 작명 요청: ${hex}`);
-
     try {
         if (BEST_MODEL_URL) {
-            const promptText = `You are an expert UI/UX Designer.
-Analyze the HEX code ${hex} deeply. Give me a specific and descriptive English color name.
-Reply ONLY with the name.`;
-
+            const promptText = `Analyze the HEX code ${hex}. Give me a descriptive English color name. Reply ONLY with the name.`;
             const response = await axios.post(
                 BEST_MODEL_URL,
                 { contents: [{ parts: [{ text: promptText }] }] },
                 { headers: { 'Content-Type': 'application/json' } }
             );
-
-            if (response.data.candidates && response.data.candidates.length > 0) {
-                const aiName = response.data.candidates[0].content.parts[0].text.trim().replace(/["'\n]/g, "");
-                return res.json({ name: aiName });
+            if (response.data.candidates) {
+                return res.json({ name: response.data.candidates[0].content.parts[0].text.trim().replace(/["'\n]/g, "") });
             }
         } 
-        throw new Error("AI 모델 준비 안됨");
+        throw new Error("AI 모델 없음");
     } catch (error) {
         const names = namer(hex);
-        const backupName = names.pantone[0].name; 
-        return res.json({ name: backupName });
+        return res.json({ name: names.pantone[0].name });
     }
 });
 
-// --- [API 2: AI 채팅] ---
+// 2. AI 채팅
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
     try {
         if (BEST_MODEL_URL) {
             const designData = JSON.stringify(readData());
-            const promptText = `너는 UI/UX 디자인 시스템 전문가야. 
-아래 가이드를 참고해서 질문에 친절하게 답해줘.
-[가이드 데이터] ${designData}
-[질문] ${message}`;
-
+            const promptText = `너는 UI/UX 디자인 시스템 전문가야. 다음 데이터를 참고해 질문에 답해줘.\n[데이터] ${designData}\n[질문] ${message}`;
+            
             const response = await axios.post(
                 BEST_MODEL_URL,
                 { contents: [{ parts: [{ text: promptText }] }] },
                 { headers: { 'Content-Type': 'application/json' } }
             );
-
-            const aiResponse = response.data.candidates[0].content.parts[0].text;
-            return res.json({ response: aiResponse });
+            return res.json({ response: response.data.candidates[0].content.parts[0].text });
         }
-        throw new Error("AI 모델 준비 안됨");
+        throw new Error("AI 모델 없음");
     } catch (error) {
-        console.error("⚠️ 대화 실패:", error.message);
-        return res.status(500).json({ response: "미안해, 지금은 대화가 조금 어려워." });
+        return res.status(500).json({ response: "AI 연결에 실패했어요. ㅠㅠ" });
     }
-}); // 👈 여기가 닫혀있어야 합니다!
+});
 
-// --- [API 3: 프로젝트 관리] ---
+// 3. 프로젝트 저장/불러오기
 app.get('/api/projects/:email', (req, res) => {
     const { email } = req.params;
     const data = readData();
@@ -130,39 +122,21 @@ app.post('/api/projects', (req, res) => {
     res.json({ success: true });
 });
 
-// 🚀 [추가] 리액트 정적 파일 제공 (배포 필수!)
-// ==========================================
-// 1. 'frontend/build' 폴더를 정적 파일로 제공 (리액트 빌드 결과물)
-// reesefront -> web 으로 변경!
+// ---------------------------------------------------------
+// 🚀 [핵심] 리액트 화면 연결 (Web 폴더)
+// ---------------------------------------------------------
+
+// 정적 파일 위치를 'web/build'로 설정 (이제 reesefront 아님!)
 app.use(express.static(path.join(__dirname, '../web/build')));
 
+// 어떤 주소로 들어오든 무조건 index.html을 보여줘서 리액트가 뜨게 함
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../web/build', 'index.html'));
 });
 
-// === 🕵️‍♀️ 디버깅용 코드 시작 ===
-app.get('/debug', (req, res) => {
-    // 1. 현재 서버 파일의 위치
-    const currentDir = __dirname;
-    // 2. 서버가 찾으려는 리액트 빌드 폴더 위치
-    const buildDir = path.join(__dirname, '../client/build');
-    // 3. 진짜 그 폴더가 존재하는지 확인
-    const exists = fs.existsSync(buildDir);
-    // 4. index.html도 있는지 확인
-    const indexExists = fs.existsSync(path.join(buildDir, 'index.html'));
-
-    res.json({
-        "현재_서버_위치(__dirname)": currentDir,
-        "찾으려는_빌드_폴더(buildDir)": buildDir,
-        "빌드_폴더_존재_여부": exists,
-        "index.html_존재_여부": indexExists,
-        "상위_폴더_파일_목록": fs.readdirSync(path.join(__dirname, '../')), // 상위 폴더에 뭐가 있는지 봅니다.
-    });
-});
-// === 디버깅용 코드 끝 ===
-
-const PORT = process.env.PORT || 8080; // Railway가 주는 포트 쓰기 (없으면 8080)
-
+// ---------------------------------------------------------
+// 🏁 서버 시작
+// ---------------------------------------------------------
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 서버가 포트 ${PORT}에서 활기차게 돌아가고 있어!`);
 });
