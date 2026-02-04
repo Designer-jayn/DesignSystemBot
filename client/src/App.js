@@ -83,12 +83,14 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
   };
 
+
   // 이름 수정 모드 진입
   const startRenaming = (projectName, e) => {
     e.stopPropagation();
     setIsRenaming(projectName);
     setRenameInput(projectName);
     setDropdownOpen(null); // 메뉴 닫기
+    
   };
 
   // 이름 수정 저장
