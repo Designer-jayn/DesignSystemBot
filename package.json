@@ -1,6 +1,6 @@
 {
   "name": "root-project",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "start": "node backend/server.js",
     "build": "cd web && npm install && npm run build"
