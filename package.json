@@ -2,7 +2,8 @@
   "scripts": {
     "start": "node backend/server.js",
     "build": "cd reesefront && npm install && npm run build"
-},
+  },
+  
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@react-oauth/google": "^0.13.4",
