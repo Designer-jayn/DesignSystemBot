@@ -8,7 +8,11 @@ const namer = require('color-namer');
 require('dotenv').config();
 
 const app = express();
-const PORT = 5001; 
+// const PORT = 5001; 
+const port = process.env.PORT || 8080; 
+app.listen(port, "0.0.0.0", () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 app.use(cors());
 app.use(bodyParser.json());
