@@ -3,7 +3,7 @@
   "version": "1.0.0",
  "scripts": {
     "start": "node backend/server.js", 
-    "build": "cd client && npm install && npm run build"
+    "build": "cd reesefront && npm install && npm run build" 
 },
   "dependencies": {
     "express": "^4.18.2",
@@ -12,4 +12,4 @@
     "cors": "^2.8.5",
     "color-namer": "^1.4.0"
   }
-}
+}  
