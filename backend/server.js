@@ -104,33 +104,47 @@ if (fs.existsSync(distPath)) {
 
 // 3. 폴더가 있으면 연결, 없으면 안내 메시지
 if (finalPath) {
-    // ▼▼▼▼▼ 여기부터 복사해서 덮어씌우세요! ▼▼▼▼▼
+ // ▼▼▼▼▼ 여기부터 복사해서 덮어씌우세요! (조건문 제거 버전) ▼▼▼▼▼
 
-// 1. 프로젝트의 '진짜 바닥(Root)' 위치를 기준으로 길을 찾습니다. (제일 안전함)
-const rootPath = process.cwd(); 
+// 1. 경로 설정 (CWD 기준)
+const rootPath = process.cwd();
 const webPath = path.join(rootPath, 'web');
-
-// 2. 옛날 방식(build)인지 요즘 방식(dist)인지 서버가 직접 확인합니다.
 const distPath = path.join(webPath, 'dist');
 const buildPath = path.join(webPath, 'build');
 
-// 3. 있는 폴더를 선택! (dist가 있으면 dist, 아니면 build)
-let finalPath = fs.existsSync(distPath) ? distPath : buildPath;
+// 2. 어떤 폴더가 있는지 확인 (로그로 범인 찾기)
+const hasDist = fs.existsSync(distPath);
+const hasBuild = fs.existsSync(buildPath);
 
-// 4. 화면 연결 (만약 폴더가 없으면 없다고 알려줌)
-if (fs.existsSync(finalPath)) {
-    console.log(`🍊 화면 파일 연결 성공! 경로: ${finalPath}`);
+// 3. 폴더 선택 (dist 우선, 없으면 build)
+const finalPath = hasDist ? distPath : buildPath;
+
+console.log(`📂 경로 확인중...`);
+console.log(`- web 폴더: ${webPath}`);
+console.log(`- dist 존재여부: ${hasDist}`);
+console.log(`- build 존재여부: ${hasBuild}`);
+
+// 4. [중요] 정적 파일 연결 (폴더가 있을 때만)
+if (hasDist || hasBuild) {
     app.use(express.static(finalPath));
-    app.get('*', (req, res) => {
-        res.sendFile(path.join(finalPath, 'index.html'));
-    });
-} else {
-    console.log(`🚨 화면 파일(build/dist)을 못 찾겠어요. 현재 탐색 경로: ${webPath}`);
-    // 화면이 없어도 서버가 죽지 않게 안내 문구 띄우기
-    app.get('*', (req, res) => {
-        res.send(`<h1>서버는 켜졌는데 build/dist 폴더가 없어요! (경로: ${webPath})</h1>`);
-    });
 }
+
+// 5. [핵심] 무엇이든 들어오면 무조건 응답하기 (Cannot GET / 해결사)
+app.get('*', (req, res) => {
+    if (hasDist || hasBuild) {
+        // 화면 파일이 있으면 보여줌
+        res.sendFile(path.join(finalPath, 'index.html'));
+    } else {
+        // 화면 파일이 없으면 '없다'고 글자라도 보여줌 (이제 흰 화면 안 나옴!)
+        res.status(404).send(`
+            <h1>서버는 켜졌는데 화면 파일이 없어요! ㅠㅠ</h1>
+            <p>현재 경로: ${rootPath}</p>
+            <p>확인된 web 폴더: ${webPath}</p>
+            <p>빌드 폴더 상태 -> dist: ${hasDist}, build: ${hasBuild}</p>
+            <p><b>해결법:</b> package.json의 build 명령어가 제대로 돌았는지 확인해주세요.</p>
+        `);
+    }
+});
 
 // ▲▲▲▲▲ 여기까지! ▲▲▲▲▲
 }
