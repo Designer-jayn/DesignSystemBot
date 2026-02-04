@@ -72,81 +72,73 @@ app.post('/api/chat', async (req, res) => {
 app.get('/api/projects/:email', (req, res) => { res.json(readData()[req.params.email] || { "기본 프로젝트": [] }); });
 app.post('/api/projects', (req, res) => { const { email, projects } = req.body; const data = readData(); data[email] = projects; writeData(data); res.json({ success: true }); });
 
+
 // ---------------------------------------------------------
-// 🕵️‍♀️ [핵심] 폴더 탐정 (dist 인지 build 인지 찾아냄)
+// 🕵️‍♀️ [레이더 가동] 폴더 위치 추적 시스템 (여기가 핵심!)
 // ---------------------------------------------------------
-const webPath = path.join(__dirname, '../web');
-const distPath = path.join(webPath, 'dist');
-const buildPath = path.join(webPath, 'build');
 
-console.log(`📂 Frontend 폴더 위치: ${webPath}`);
+// 1. 현재 위치 파악 (서버가 어디서 돌고 있나?)
+const currentDir = __dirname;
+const parentDir = path.join(__dirname, '../'); // 한 칸 위
 
-// 1. web 폴더 안에 무슨 파일이 있는지 로그를 찍어봅니다. (디버깅용)
-try {
-    if (fs.existsSync(webPath)) {
-        console.log(`📄 web 폴더 내용물:`, fs.readdirSync(webPath));
-    } else {
-        console.error(`🚨 web 폴더가 아예 없습니다!`);
-    }
-} catch (e) { console.error(`⚠️ 폴더 확인 중 에러:`, e.message); }
+// 2. 'web' 폴더 찾기 (부모 폴더에도 찾아보고, 현재 폴더에도 찾아봄)
+const webPathInParent = path.join(parentDir, 'web');
+const webPathInCurrent = path.join(currentDir, 'web');
 
-// 2. dist 또는 build 폴더 결정
-let finalPath = null;
-if (fs.existsSync(distPath)) {
-    console.log("🍊 [감지됨] 'dist' 폴더를 사용합니다.");
-    finalPath = distPath;
-} else if (fs.existsSync(buildPath)) {
-    console.log("🍎 [감지됨] 'build' 폴더를 사용합니다.");
-    finalPath = buildPath;
+// 어디에 'web'이 있는지 확인
+let finalWebPath = null;
+if (fs.existsSync(webPathInParent)) {
+    finalWebPath = webPathInParent;
+} else if (fs.existsSync(webPathInCurrent)) {
+    finalWebPath = webPathInCurrent;
+}
+
+// 3. 빌드 폴더(dist 또는 build) 찾기
+let clientBuildPath = null;
+if (finalWebPath) {
+    const dist = path.join(finalWebPath, 'dist');
+    const build = path.join(finalWebPath, 'build');
+    
+    if (fs.existsSync(dist)) clientBuildPath = dist;
+    else if (fs.existsSync(build)) clientBuildPath = build;
+}
+
+// 4. 화면 연결 (찾았으면 연결, 못 찾았으면 안내)
+if (clientBuildPath) {
+    console.log(`🍊 화면 파일 연결 성공! 경로: ${clientBuildPath}`);
+    app.use(express.static(clientBuildPath));
+    
+    // 어떤 주소로 들어와도 index.html 보여주기
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(clientBuildPath, 'index.html'));
+    });
 } else {
-    console.error("🚨 [비상] build 폴더도 없고 dist 폴더도 없습니다!");
-}
+    console.log(`🚨 화면 파일을 못 찾았습니다.`);
+    
+    // 디버깅용: 주변에 무슨 파일이 있는지 조회
+    let debugInfo = "";
+    try {
+        debugInfo += `<b>[현재 폴더 파일들]:</b> ${fs.readdirSync(currentDir).join(', ')}<br>`;
+        debugInfo += `<b>[부모 폴더 파일들]:</b> ${fs.readdirSync(parentDir).join(', ')}`;
+    } catch (e) { debugInfo = "파일 목록 조회 실패"; }
 
-// 3. 폴더가 있으면 연결, 없으면 안내 메시지
-if (finalPath) {
- // ▼▼▼▼▼ 여기부터 복사해서 덮어씌우세요! (조건문 제거 버전) ▼▼▼▼▼
-
-// 1. 경로 설정 (CWD 기준)
-const rootPath = process.cwd();
-const webPath = path.join(rootPath, 'web');
-const distPath = path.join(webPath, 'dist');
-const buildPath = path.join(webPath, 'build');
-
-// 2. 어떤 폴더가 있는지 확인 (로그로 범인 찾기)
-const hasDist = fs.existsSync(distPath);
-const hasBuild = fs.existsSync(buildPath);
-
-// 3. 폴더 선택 (dist 우선, 없으면 build)
-const finalPath = hasDist ? distPath : buildPath;
-
-console.log(`📂 경로 확인중...`);
-console.log(`- web 폴더: ${webPath}`);
-console.log(`- dist 존재여부: ${hasDist}`);
-console.log(`- build 존재여부: ${hasBuild}`);
-
-// 4. [중요] 정적 파일 연결 (폴더가 있을 때만)
-if (hasDist || hasBuild) {
-    app.use(express.static(finalPath));
-}
-
-// 5. [핵심] 무엇이든 들어오면 무조건 응답하기 (Cannot GET / 해결사)
-app.get('*', (req, res) => {
-    if (hasDist || hasBuild) {
-        // 화면 파일이 있으면 보여줌
-        res.sendFile(path.join(finalPath, 'index.html'));
-    } else {
-        // 화면 파일이 없으면 '없다'고 글자라도 보여줌 (이제 흰 화면 안 나옴!)
+    // 화면에 '왜 안되는지' 리포트 출력
+    app.get('*', (req, res) => {
         res.status(404).send(`
-            <h1>서버는 켜졌는데 화면 파일이 없어요! ㅠㅠ</h1>
-            <p>현재 경로: ${rootPath}</p>
-            <p>확인된 web 폴더: ${webPath}</p>
-            <p>빌드 폴더 상태 -> dist: ${hasDist}, build: ${hasBuild}</p>
-            <p><b>해결법:</b> package.json의 build 명령어가 제대로 돌았는지 확인해주세요.</p>
+            <div style="font-family: sans-serif; padding: 20px; line-height: 1.6;">
+                <h1>🚧 화면 파일(build/dist)을 못 찾았어요!</h1>
+                <hr />
+                <h3>🕵️‍♀️ 탐색 결과 리포트</h3>
+                <ul>
+                    <li><b>web 폴더 발견 여부:</b> ${finalWebPath ? '✅ 찾음 (' + finalWebPath + ')' : '❌ 못 찾음 (서버에 web 폴더가 안 왔어요!)'}</li>
+                    <li><b>빌드 폴더(dist/build) 상태:</b> ${clientBuildPath ? '✅ 있음' : '❌ 없음 (빌드 명령어가 실패했거나 실행 안 됨)'}</li>
+                </ul>
+                <hr />
+                <h3>📂 서버 주변 파일 목록 (범인 찾기용)</h3>
+                <p>${debugInfo}</p>
+            </div>
         `);
-    }
-});
-
-// ▲▲▲▲▲ 여기까지! ▲▲▲▲▲
+    });
 }
 
 // ---------------------------------------------------------
