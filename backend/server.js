@@ -9,6 +9,8 @@ require('dotenv').config();
 
 const app = express();
 // const PORT = 5001; 
+// 이 줄이 반드시 있어야 해! (파일 상단에 위치)
+const port = process.env.PORT || 8080;
 
 
 app.use(cors());
@@ -134,7 +136,6 @@ app.post('/api/projects', (req, res) => {
     res.json({ success: true });
 });
 
-
 app.listen(port, "0.0.0.0", () => {
-  console.log(`🚀 서버가 포트 ${port}에서 외부 신호를 받을 준비가 됐어!`);
+  console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
 });
