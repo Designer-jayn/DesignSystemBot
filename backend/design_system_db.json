@@ -1,0 +1,330 @@
+{
+  "tbtbd2@gmail.com": {
+    "789999": [
+      {
+        "id": 1769997099933,
+        "userInput": "#123456",
+        "name": "Color-123456",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#CED2DB",
+            "isTarget": false
+          },
+          {
+            "level": "200",
+            "hex": "#9FA7B8",
+            "isTarget": true
+          },
+          {
+            "level": "300",
+            "hex": "#717E96",
+            "isTarget": false
+          },
+          {
+            "level": "400",
+            "hex": "#445875",
+            "isTarget": false
+          },
+          {
+            "level": "500",
+            "hex": "#123456",
+            "isTarget": false
+          },
+          {
+            "level": "600",
+            "hex": "#032B4C",
+            "isTarget": false
+          },
+          {
+            "level": "700",
+            "hex": "#002242",
+            "isTarget": false
+          },
+          {
+            "level": "800",
+            "hex": "#001A39",
+            "isTarget": false
+          },
+          {
+            "level": "900",
+            "hex": "#00102F",
+            "isTarget": false
+          }
+        ],
+        "target": 200,
+        "isBookmarked": true
+      },
+      {
+        "userInput": "#156543",
+        "name": "Color-156543",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#D0DFD6",
+            "isTarget": false
+          },
+          {
+            "level": "200",
+            "hex": "#A3BFAF",
+            "isTarget": true
+          },
+          {
+            "level": "300",
+            "hex": "#76A189",
+            "isTarget": false
+          },
+          {
+            "level": "400",
+            "hex": "#4A8365",
+            "isTarget": false
+          },
+          {
+            "level": "500",
+            "hex": "#156543",
+            "isTarget": false
+          },
+          {
+            "level": "600",
+            "hex": "#005232",
+            "isTarget": false
+          },
+          {
+            "level": "700",
+            "hex": "#004122",
+            "isTarget": false
+          },
+          {
+            "level": "800",
+            "hex": "#002F13",
+            "isTarget": false
+          },
+          {
+            "level": "900",
+            "hex": "#002100",
+            "isTarget": false
+          }
+        ],
+        "target": 200,
+        "isBookmarked": true
+      }
+    ],
+    "SOOP 디자인 시스템": [
+      {
+        "name": "Color-123455",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#CED2DB",
+            "isTarget": false
+          },
+          {
+            "level": "200",
+            "hex": "#9EA7B8",
+            "isTarget": true
+          },
+          {
+            "level": "300",
+            "hex": "#717E95",
+            "isTarget": false
+          },
+          {
+            "level": "400",
+            "hex": "#445875",
+            "isTarget": false
+          },
+          {
+            "level": "500",
+            "hex": "#123455",
+            "isTarget": false
+          },
+          {
+            "level": "600",
+            "hex": "#032B4B",
+            "isTarget": false
+          },
+          {
+            "level": "700",
+            "hex": "#002241",
+            "isTarget": false
+          },
+          {
+            "level": "800",
+            "hex": "#001A38",
+            "isTarget": false
+          },
+          {
+            "level": "900",
+            "hex": "#00112F",
+            "isTarget": false
+          }
+        ],
+        "target": 200
+      }
+    ],
+    "기본 프로젝트": [
+      {
+        "id": 1769996578152,
+        "userInput": "#678560",
+        "name": "Color-678560",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#DFE6DD",
+            "isTarget": false
+          },
+          {
+            "level": "200",
+            "hex": "#C0CDBC",
+            "isTarget": false
+          },
+          {
+            "level": "300",
+            "hex": "#A2B49D",
+            "isTarget": false
+          },
+          {
+            "level": "400",
+            "hex": "#849C7E",
+            "isTarget": true
+          },
+          {
+            "level": "500",
+            "hex": "#678560",
+            "isTarget": false
+          },
+          {
+            "level": "600",
+            "hex": "#4D6A47",
+            "isTarget": false
+          },
+          {
+            "level": "700",
+            "hex": "#35512F",
+            "isTarget": false
+          },
+          {
+            "level": "800",
+            "hex": "#1D3919",
+            "isTarget": false
+          },
+          {
+            "level": "900",
+            "hex": "#082200",
+            "isTarget": false
+          }
+        ],
+        "target": 400,
+        "isBookmarked": true
+      },
+      {
+        "id": 1769996546955,
+        "userInput": "#123456",
+        "name": "Color-123456",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#CED2DB",
+            "isTarget": false
+          },
+          {
+            "level": "200",
+            "hex": "#9FA7B8",
+            "isTarget": true
+          },
+          {
+            "level": "300",
+            "hex": "#717E96",
+            "isTarget": false
+          },
+          {
+            "level": "400",
+            "hex": "#445875",
+            "isTarget": false
+          },
+          {
+            "level": "500",
+            "hex": "#123456",
+            "isTarget": false
+          },
+          {
+            "level": "600",
+            "hex": "#032B4C",
+            "isTarget": false
+          },
+          {
+            "level": "700",
+            "hex": "#002242",
+            "isTarget": false
+          },
+          {
+            "level": "800",
+            "hex": "#001A39",
+            "isTarget": false
+          },
+          {
+            "level": "900",
+            "hex": "#00102F",
+            "isTarget": false
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false
+      },
+      {
+        "userInput": "#325661",
+        "name": "Color-325661",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#D4DBDD",
+            "isTarget": false
+          },
+          {
+            "level": "200",
+            "hex": "#AAB8BD",
+            "isTarget": false
+          },
+          {
+            "level": "300",
+            "hex": "#81969D",
+            "isTarget": true
+          },
+          {
+            "level": "400",
+            "hex": "#59757E",
+            "isTarget": false
+          },
+          {
+            "level": "500",
+            "hex": "#325661",
+            "isTarget": false
+          },
+          {
+            "level": "600",
+            "hex": "#214651",
+            "isTarget": false
+          },
+          {
+            "level": "700",
+            "hex": "#0F3641",
+            "isTarget": false
+          },
+          {
+            "level": "800",
+            "hex": "#002731",
+            "isTarget": false
+          },
+          {
+            "level": "900",
+            "hex": "#001A23",
+            "isTarget": false
+          }
+        ],
+        "target": 300,
+        "isBookmarked": false
+      }
+    ],
+    "새로운 프로젝트 1": []
+  }
+}

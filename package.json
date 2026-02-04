@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@react-oauth/google": "^0.13.4",
+    "axios": "^1.13.4",
+    "chroma-js": "^3.2.0",
+    "color-namer": "^1.4.0",
+    "lucide-react": "^0.563.0",
+    "openai": "^6.17.0"
+  }
+}

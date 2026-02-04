@@ -1,0 +1,17 @@
+# 의존성 및 가상환경 (용량 도둑들)
+node_modules/
+.venv/
+.streamlit/
+__pycache__/
+
+# 보안 및 인증 (중요!)
+client_secret.json
+designsystem*.json
+.env
+
+# 운영체제 임시 파일
+.DS_Store
+
+# 빌드 결과물
+dist/
+build/

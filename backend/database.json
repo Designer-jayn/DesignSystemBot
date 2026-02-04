@@ -1,0 +1,1540 @@
+{
+  "tbtbd2@gmail.com": {
+    "null23": [
+      {
+        "id": 1770099845923,
+        "userInput": "Spacing 요청 (tablet)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": false
+      }
+    ],
+    "test용123123": [
+      {
+        "id": 1770168691674,
+        "userInput": "#589964",
+        "name": "Juniper",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#132015",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#25412A",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#38613F",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#4A8255",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#5DA26A",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#7DB588",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#9EC7A5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#BEDAC3",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#DFECE1",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 500,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770168670558,
+        "userInput": "#234321",
+        "name": "Forest Moss",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#122211",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#244422",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#366732",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#478943",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#59AB54",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#7ABC76",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#9CCD98",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#BDDDBB",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#DEEEDD",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770168650182,
+        "userInput": "#589964",
+        "name": "Eucalyptus",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#132015",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#25412A",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#38613F",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#4A8255",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#5DA26A",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#7DB588",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#9EC7A5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#BEDAC3",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#DFECE1",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 500,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770086998515,
+        "userInput": "#234321",
+        "name": "Shaded Moss",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#122211",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#244422",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#366732",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#478943",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#59AB54",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#7ABC76",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#9CCD98",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#BDDDBB",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#DEEEDD",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770085536962,
+        "userInput": "Spacing 요청 (tablet)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": true
+      },
+      {
+        "id": 1770085517112,
+        "userInput": "Spacing 요청 (mobile)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": true
+      },
+      {
+        "id": 1770083716696,
+        "userInput": "Spacing 요청 (pc)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          },
+          {
+            "level": "sp13",
+            "value": 52,
+            "isVisible": true
+          },
+          {
+            "level": "sp14",
+            "value": 56,
+            "isVisible": true
+          },
+          {
+            "level": "sp15",
+            "value": 60,
+            "isVisible": true
+          },
+          {
+            "level": "sp20",
+            "value": 80,
+            "isVisible": true
+          },
+          {
+            "level": "sp25",
+            "value": 100,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": true
+      },
+      {
+        "id": 1770083677564,
+        "userInput": "#231234",
+        "name": "Charcoal Violet",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#1A0D26",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#331A4C",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#4D2772",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#663498",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#8042BD",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#9967CB",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#B38DD8",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#CCB3E5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#E6D9F2",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 100,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770083654733,
+        "userInput": "Spacing 요청 (mobile)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": false
+      },
+      {
+        "id": 1770083649130,
+        "userInput": "Spacing 요청 (pc)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          },
+          {
+            "level": "sp13",
+            "value": 52,
+            "isVisible": true
+          },
+          {
+            "level": "sp14",
+            "value": 56,
+            "isVisible": true
+          },
+          {
+            "level": "sp15",
+            "value": 60,
+            "isVisible": true
+          },
+          {
+            "level": "sp20",
+            "value": 80,
+            "isVisible": true
+          },
+          {
+            "level": "sp25",
+            "value": 100,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": true
+      },
+      {
+        "id": 1770083629551,
+        "userInput": "Spacing 요청 (tablet)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": true
+      },
+      {
+        "id": 1770083612983,
+        "userInput": "#231234",
+        "name": "Abyssal Violet",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#1A0D26",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#331A4C",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#4D2772",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#663498",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#8042BD",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#9967CB",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#B38DD8",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#CCB3E5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#E6D9F2",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 100,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770082990919,
+        "userInput": "#123456",
+        "name": "Petrol Blue",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#091A2A",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#123354",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#1A4D7F",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#2366A9",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#2C80D3",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#5699DC",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#80B3E5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#ABCCED",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#D5E6F6",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false,
+        "type": "color"
+      },
+      {
+        "id": 1770083075911,
+        "userInput": "Spacing (all)",
+        "name": "Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          },
+          {
+            "level": "sp13",
+            "value": 52,
+            "isVisible": true
+          },
+          {
+            "level": "sp14",
+            "value": 56,
+            "isVisible": true
+          },
+          {
+            "level": "sp15",
+            "value": 60,
+            "isVisible": true
+          },
+          {
+            "level": "sp20",
+            "value": 80,
+            "isVisible": true
+          },
+          {
+            "level": "sp25",
+            "value": 100,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": false
+      },
+      {
+        "id": 1770082375538,
+        "userInput": "Spacing (mobile)",
+        "name": "MOBILE Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": false
+      },
+      {
+        "id": 1770082320012,
+        "userInput": "Spacing (tablet)",
+        "name": "TABLET Spacing",
+        "palette": [
+          {
+            "level": "sp0.5",
+            "value": 2,
+            "isVisible": true
+          },
+          {
+            "level": "sp1",
+            "value": 4,
+            "isVisible": true
+          },
+          {
+            "level": "sp2",
+            "value": 8,
+            "isVisible": true
+          },
+          {
+            "level": "sp3",
+            "value": 12,
+            "isVisible": true
+          },
+          {
+            "level": "sp4",
+            "value": 16,
+            "isVisible": true
+          },
+          {
+            "level": "sp5",
+            "value": 20,
+            "isVisible": true
+          },
+          {
+            "level": "sp6",
+            "value": 24,
+            "isVisible": true
+          },
+          {
+            "level": "sp7",
+            "value": 28,
+            "isVisible": true
+          },
+          {
+            "level": "sp8",
+            "value": 32,
+            "isVisible": true
+          },
+          {
+            "level": "sp9",
+            "value": 36,
+            "isVisible": true
+          },
+          {
+            "level": "sp10",
+            "value": 40,
+            "isVisible": true
+          },
+          {
+            "level": "sp11",
+            "value": 44,
+            "isVisible": true
+          },
+          {
+            "level": "sp12",
+            "value": 48,
+            "isVisible": true
+          }
+        ],
+        "type": "spacing",
+        "isBookmarked": false
+      },
+      {
+        "id": 1770081851839,
+        "userInput": "#123466",
+        "name": "Midnight Marine",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#08162B",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#0F2C57",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#174282",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#1F58AD",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#266FD9",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#528BE0",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#7DA8E8",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#A8C5F0",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#D4E2F7",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false
+      },
+      {
+        "id": 1770006281508,
+        "userInput": "#123568",
+        "name": "Abyss Blue",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#08162B",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#0F2C57",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#174282",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#1E59AE",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#266FD9",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#518CE1",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#7DA8E8",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#A8C5F0",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#D4E2F7",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false
+      },
+      {
+        "id": 1770001761927,
+        "userInput": "#879879",
+        "name": "Faded Sage",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#191D16",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#323A2C",
+            "isTarget": false
+          },
+          {
+            "level": 300,
+            "hex": "#4C5742",
+            "isTarget": false
+          },
+          {
+            "level": 400,
+            "hex": "#657359",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#7E906F",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#98A68C",
+            "isTarget": false
+          },
+          {
+            "level": 700,
+            "hex": "#B2BDA8",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#CBD3C5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#E5E9E2",
+            "isTarget": false
+          }
+        ],
+        "target": 500,
+        "isBookmarked": true
+      },
+      {
+        "id": 1769998887038,
+        "userInput": "#848774",
+        "name": "Gray",
+        "palette": [
+          {
+            "level": "100",
+            "hex": "#E5E6E2",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "200",
+            "hex": "#CCCDC5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "300",
+            "hex": "#B4B5A9",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "400",
+            "hex": "#9B9E8E",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "500",
+            "hex": "#848774",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": "600",
+            "hex": "#686B59",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "700",
+            "hex": "#4D503F",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "800",
+            "hex": "#343726",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": "900",
+            "hex": "#1C1F0F",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 500,
+        "isBookmarked": false
+      }
+    ],
+    "새 프로젝트 1": [
+      {
+        "id": 1770099985206,
+        "userInput": "#123456",
+        "name": "Atlantic Deep",
+        "palette": [
+          {
+            "level": 100,
+            "hex": "#091A2A",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 200,
+            "hex": "#123354",
+            "isTarget": true,
+            "isVisible": true
+          },
+          {
+            "level": 300,
+            "hex": "#1A4D7F",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 400,
+            "hex": "#2366A9",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 500,
+            "hex": "#2C80D3",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 600,
+            "hex": "#5699DC",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 700,
+            "hex": "#80B3E5",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 800,
+            "hex": "#ABCCED",
+            "isTarget": false,
+            "isVisible": true
+          },
+          {
+            "level": 900,
+            "hex": "#D5E6F6",
+            "isTarget": false,
+            "isVisible": true
+          }
+        ],
+        "target": 200,
+        "isBookmarked": false,
+        "type": "color"
+      }
+    ]
+  }
+}
