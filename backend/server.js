@@ -139,6 +139,27 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
 
+// === 🕵️‍♀️ 디버깅용 코드 시작 ===
+app.get('/debug', (req, res) => {
+    // 1. 현재 서버 파일의 위치
+    const currentDir = __dirname;
+    // 2. 서버가 찾으려는 리액트 빌드 폴더 위치
+    const buildDir = path.join(__dirname, '../client/build');
+    // 3. 진짜 그 폴더가 존재하는지 확인
+    const exists = fs.existsSync(buildDir);
+    // 4. index.html도 있는지 확인
+    const indexExists = fs.existsSync(path.join(buildDir, 'index.html'));
+
+    res.json({
+        "현재_서버_위치(__dirname)": currentDir,
+        "찾으려는_빌드_폴더(buildDir)": buildDir,
+        "빌드_폴더_존재_여부": exists,
+        "index.html_존재_여부": indexExists,
+        "상위_폴더_파일_목록": fs.readdirSync(path.join(__dirname, '../')), // 상위 폴더에 뭐가 있는지 봅니다.
+    });
+});
+// === 디버깅용 코드 끝 ===
+
 app.listen(port, "0.0.0.0", () => {
   console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
 });
