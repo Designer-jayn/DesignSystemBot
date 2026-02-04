@@ -90,7 +90,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     setIsRenaming(projectName);
     setRenameInput(projectName);
     setDropdownOpen(null); // 메뉴 닫기
-    
+     
   };
 
   // 이름 수정 저장
