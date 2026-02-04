@@ -161,13 +161,8 @@ app.get('/debug', (req, res) => {
 });
 // === 디버깅용 코드 끝 ===
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
-});
+const PORT = process.env.PORT || 8080; // Railway가 주는 포트 쓰기 (없으면 8080)
 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
-});
-app.listen(port, "0.0.0.0", () => {
-  console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 서버가 포트 ${PORT}에서 활기차게 돌아가고 있어!`);
 });
