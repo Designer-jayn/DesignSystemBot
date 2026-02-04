@@ -133,10 +133,11 @@ app.post('/api/projects', (req, res) => {
 // 🚀 [추가] 리액트 정적 파일 제공 (배포 필수!)
 // ==========================================
 // 1. 'frontend/build' 폴더를 정적 파일로 제공 (리액트 빌드 결과물)
-app.use(express.static(path.join(__dirname, '../client/build')));
+// [수정] 폴더명이 reesefront로 변경됨!
+app.use(express.static(path.join(__dirname, '../reesefront/build')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../reesefront/build', 'index.html'));
 });
 
 // === 🕵️‍♀️ 디버깅용 코드 시작 ===

@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "start": "node server.js",
-    "build": "ls -F && cd frontend && npm install && npm run build"
+    "start": "node backend/server.js",
+    "build": "cd reesefront && npm install && npm run build"
 },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
