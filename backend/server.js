@@ -133,13 +133,15 @@ app.post('/api/projects', (req, res) => {
 // 🚀 [추가] 리액트 정적 파일 제공 (배포 필수!)
 // ==========================================
 // 1. 'frontend/build' 폴더를 정적 파일로 제공 (리액트 빌드 결과물)
-// [수정] 폴더명이 client로 바뀌었으니 경로도 수정!
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, '../client/build')));
 
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../client/build', 'index.html'));
 });
-// ==========================================
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
+});
 
 app.listen(port, "0.0.0.0", () => {
   console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
