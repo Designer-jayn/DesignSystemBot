@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node server.js",
+    "build": "ls -F && cd frontend && npm install && npm run build"
+},
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@react-oauth/google": "^0.13.4",
@@ -8,4 +12,12 @@
     "lucide-react": "^0.563.0",
     "openai": "^6.17.0"
   }
+
+  
 }
+
+
+
+
+
+
