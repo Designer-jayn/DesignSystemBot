@@ -134,3 +134,7 @@ app.post('/api/projects', (req, res) => {
     res.json({ success: true });
 });
 
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`🚀 서버가 포트 ${port}에서 외부 신호를 받을 준비가 됐어!`);
+});
