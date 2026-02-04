@@ -9,10 +9,7 @@ require('dotenv').config();
 
 const app = express();
 // const PORT = 5001; 
-const port = process.env.PORT || 8080; 
-app.listen(port, "0.0.0.0", () => {
-  console.log(`Server is running on port ${port}`);
-});
+
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -137,6 +134,3 @@ app.post('/api/projects', (req, res) => {
     res.json({ success: true });
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 백엔드 서버가 http://localhost:${PORT} 에서 실행 중! (자동 모델 감지)`);
-});
