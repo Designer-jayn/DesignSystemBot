@@ -5,22 +5,17 @@
     "start": "node backend/server.js",
     "build": "cd web && npm install && npm run build"
   },
-  
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@react-oauth/google": "^0.13.4",
     "axios": "^1.13.4",
+    "body-parser": "^2.2.2",
     "chroma-js": "^3.2.0",
     "color-namer": "^1.4.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "lucide-react": "^0.563.0",
     "openai": "^6.17.0"
   }
-  
-  
 }
-
-
-
-
-
-
