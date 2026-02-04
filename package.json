@@ -1,8 +1,10 @@
 {
+  "name": "root-project",
+  "version": "1.0.0",
   "scripts": {
     "start": "node backend/server.js",
-    "build": "cd reesefront && npm install && npm run build"
-},
+    "build": "cd reesefront && npm install && npm run build" 
+  },
   
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
