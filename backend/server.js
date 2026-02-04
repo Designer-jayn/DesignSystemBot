@@ -8,10 +8,7 @@ const namer = require('color-namer');
 require('dotenv').config();
 
 const app = express();
-// const PORT = 5001; 
-// 이 줄이 반드시 있어야 해! (파일 상단에 위치)
 const port = process.env.PORT || 8080;
-
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -29,34 +26,26 @@ const writeData = (data) => fs.writeFileSync(DATA_FILE, JSON.stringify(data, nul
 // ---------------------------------------------------------
 let BEST_MODEL_URL = ""; 
 
-// 서버 시작할 때 구글한테 "나 뭐 쓸 수 있어?" 물어보는 함수
 const findBestModel = async () => {
     if (!process.env.GEMINI_API_KEY) return;
-    
     try {
         console.log("🕵️‍♀️ 사용 가능한 AI 모델을 검색 중...");
-        // 모델 리스트 요청
         const res = await axios.get(
             `https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`
         );
 
         const models = res.data.models;
-        // 'generateContent' 기능이 있고, 이름에 'gemini'가 들어가는 모델 찾기
         const validModels = models.filter(m => 
             m.supportedGenerationMethods.includes("generateContent") && 
             m.name.includes("gemini")
         );
 
         if (validModels.length > 0) {
-            // 1순위: flash (빠름), 2순위: pro (똑똑함), 3순위: 아무거나
             let best = validModels.find(m => m.name.includes("flash")) || 
                        validModels.find(m => m.name.includes("pro")) || 
                        validModels[0];
             
-            // models/gemini-pro 형태의 이름을 가져옴
             const modelName = best.name.replace("models/", "");
-            
-            // 최종 URL 확정
             BEST_MODEL_URL = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${process.env.GEMINI_API_KEY}`;
             console.log(`🎉 찾았다! 이 모델을 사용합니다: [ ${modelName} ]`);
         } else {
@@ -67,61 +56,66 @@ const findBestModel = async () => {
     }
 };
 
-// 서버 켜지자마자 실행!
 findBestModel();
 
-
-// --- [API 1: AI 네이밍 (자동 감지된 모델 사용)] ---
+// --- [API 1: AI 네이밍] ---
 app.post('/api/ai-naming', async (req, res) => {
     const { hex } = req.body;
     console.log(`🎨 작명 요청: ${hex}`);
 
     try {
-        // 모델 URL이 준비되었는지 확인
         if (BEST_MODEL_URL) {
-            console.log("✨ 감지된 AI 모델로 요청 보냄...");
-
             const promptText = `You are an expert UI/UX Designer.
-Analyze the HEX code ${hex} deeply, focusing on its hue, saturation, and brightness.
-Give me a **specific and descriptive** English color name.
-
-[Rules]
-1. **NEVER** return a single generic color name like 'Gray', 'Blue', 'Green', or 'Red'.
-2. Capture the subtle undertone and nuance.
-   - If it's a greenish gray, use names like 'Sage', 'Olive Gray', 'Moss'.
-   - If it's a brownish gray, use 'Taupe', 'Stone', 'Warm Ash'.
-   - If it's a bluish gray, use 'Slate', 'Cool Concrete'.
-3. Keep it professional but distinct (suitable for a design system token).
-4. Reply ONLY with the name (no punctuation).`;
+Analyze the HEX code ${hex} deeply. Give me a specific and descriptive English color name.
+Reply ONLY with the name.`;
 
             const response = await axios.post(
                 BEST_MODEL_URL,
-                {
-                    contents: [{ parts: [{ text: promptText }] }]
-                },
+                { contents: [{ parts: [{ text: promptText }] }] },
                 { headers: { 'Content-Type': 'application/json' } }
             );
 
-            // 응답 추출
             if (response.data.candidates && response.data.candidates.length > 0) {
                 const aiName = response.data.candidates[0].content.parts[0].text.trim().replace(/["'\n]/g, "");
-                console.log(`✅ AI 작명 성공: ${aiName}`);
                 return res.json({ name: aiName });
             }
         } 
-        
         throw new Error("AI 모델 준비 안됨");
-
     } catch (error) {
-        console.error("⚠️ AI 실패:", error.response ? error.response.data : error.message);
         const names = namer(hex);
         const backupName = names.pantone[0].name; 
-        console.log(`✅ 무료 작명 성공: ${backupName}`);
         return res.json({ name: backupName });
     }
 });
 
-// --- [나머지 API 유지] ---
+// --- [API 2: AI 채팅] ---
+app.post('/api/chat', async (req, res) => {
+    const { message } = req.body;
+    try {
+        if (BEST_MODEL_URL) {
+            const designData = JSON.stringify(readData());
+            const promptText = `너는 UI/UX 디자인 시스템 전문가야. 
+아래 가이드를 참고해서 질문에 친절하게 답해줘.
+[가이드 데이터] ${designData}
+[질문] ${message}`;
+
+            const response = await axios.post(
+                BEST_MODEL_URL,
+                { contents: [{ parts: [{ text: promptText }] }] },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            const aiResponse = response.data.candidates[0].content.parts[0].text;
+            return res.json({ response: aiResponse });
+        }
+        throw new Error("AI 모델 준비 안됨");
+    } catch (error) {
+        console.error("⚠️ 대화 실패:", error.message);
+        return res.status(500).json({ response: "미안해, 지금은 대화가 조금 어려워." });
+    }
+}); // 👈 여기가 닫혀있어야 합니다!
+
+// --- [API 3: 프로젝트 관리] ---
 app.get('/api/projects/:email', (req, res) => {
     const { email } = req.params;
     const data = readData();
