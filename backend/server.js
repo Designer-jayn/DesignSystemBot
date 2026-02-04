@@ -130,6 +130,20 @@ app.post('/api/projects', (req, res) => {
     res.json({ success: true });
 });
 
+// 🚀 [추가] 리액트 정적 파일 제공 (배포 필수!)
+// ==========================================
+// 1. 'frontend/build' 폴더를 정적 파일로 제공 (리액트 빌드 결과물)
+app.use(express.static(path.join(__dirname, 'frontend/build')));
+
+// 2. 그 외 모든 요청('*')은 리액트의 'index.html'로 보냄 (새로고침 해도 라우팅 유지)
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/build', 'index.html'));
+});
+// ==========================================
+
+app.listen(port, "0.0.0.0", () => {
+  console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
+});
 app.listen(port, "0.0.0.0", () => {
   console.log(`🚀 서버가 포트 ${port}에서 활기차게 돌아가고 있어!`);
 });
