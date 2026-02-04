@@ -104,14 +104,35 @@ if (fs.existsSync(distPath)) {
 
 // 3. 폴더가 있으면 연결, 없으면 안내 메시지
 if (finalPath) {
+    // ▼▼▼▼▼ 여기부터 복사해서 덮어씌우세요! ▼▼▼▼▼
+
+// 1. 프로젝트의 '진짜 바닥(Root)' 위치를 기준으로 길을 찾습니다. (제일 안전함)
+const rootPath = process.cwd(); 
+const webPath = path.join(rootPath, 'web');
+
+// 2. 옛날 방식(build)인지 요즘 방식(dist)인지 서버가 직접 확인합니다.
+const distPath = path.join(webPath, 'dist');
+const buildPath = path.join(webPath, 'build');
+
+// 3. 있는 폴더를 선택! (dist가 있으면 dist, 아니면 build)
+let finalPath = fs.existsSync(distPath) ? distPath : buildPath;
+
+// 4. 화면 연결 (만약 폴더가 없으면 없다고 알려줌)
+if (fs.existsSync(finalPath)) {
+    console.log(`🍊 화면 파일 연결 성공! 경로: ${finalPath}`);
     app.use(express.static(finalPath));
     app.get('*', (req, res) => {
         res.sendFile(path.join(finalPath, 'index.html'));
     });
 } else {
+    console.log(`🚨 화면 파일(build/dist)을 못 찾겠어요. 현재 탐색 경로: ${webPath}`);
+    // 화면이 없어도 서버가 죽지 않게 안내 문구 띄우기
     app.get('*', (req, res) => {
-        res.send('<h1>서버는 켜졌는데 화면 파일(build/dist)을 못 찾겠어요 ㅠㅠ 로그를 확인해주세요!</h1>');
+        res.send(`<h1>서버는 켜졌는데 build/dist 폴더가 없어요! (경로: ${webPath})</h1>`);
     });
+}
+
+// ▲▲▲▲▲ 여기까지! ▲▲▲▲▲
 }
 
 // ---------------------------------------------------------
