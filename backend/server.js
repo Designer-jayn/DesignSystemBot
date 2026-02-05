@@ -109,7 +109,11 @@ if (finalWebPath) {
 // 4. 화면 연결 (찾았으면 연결, 못 찾았으면 안내)
 if (clientBuildPath) {
     console.log(`🍊 화면 파일 연결 성공! 경로: ${clientBuildPath}`);
+    // 1. 폴더 자체를 정적 폴더로 지정
     app.use(express.static(clientBuildPath));
+
+    // 2. [추가] static 폴더 안의 파일들을 직접 서빙하도록 명시 (이게 핵심!)
+    app.use('/static', express.static(path.join(clientBuildPath, 'static')));
 } else {
     console.log(`🚨 화면 파일을 못 찾았습니다.`);
 }
