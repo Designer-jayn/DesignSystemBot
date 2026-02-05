@@ -31,7 +31,6 @@ function App() {
     if (user && user.email) fetchUserData(user.email);
   }, [user]);
 
-  // 자동 스크롤
   useEffect(() => {
     if (scrollRef.current) {
         scrollRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -59,50 +58,6 @@ function App() {
     localStorage.removeItem('designBotUser'); 
   };
 
-  const deleteProject = async (projectName, e) => {
-    e.stopPropagation();
-    if (Object.keys(projects).length === 1) {
-      alert("최소 하나의 프로젝트는 있어야 합니다.");
-      return;
-    }
-    if (!window.confirm(`'${projectName}' 프로젝트를 삭제하시겠습니까?`)) return;
-
-    const updatedProjects = { ...projects };
-    delete updatedProjects[projectName];
-
-    if (activeProject === projectName) {
-      setActiveProject(Object.keys(updatedProjects)[0]);
-    }
-
-    setProjects(updatedProjects);
-    setDropdownOpen(null);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-  };
-
-  const startRenaming = (projectName, e) => {
-    e.stopPropagation();
-    setIsRenaming(projectName);
-    setRenameInput(projectName);
-    setDropdownOpen(null); 
-  };
-
-  const saveRename = async () => {
-    if (!renameInput || renameInput === isRenaming) {
-      setIsRenaming(null);
-      return;
-    }
-    
-    const updatedProjects = { ...projects };
-    updatedProjects[renameInput] = updatedProjects[isRenaming];
-    delete updatedProjects[isRenaming];
-
-    setProjects(updatedProjects);
-    setActiveProject(renameInput);
-    setIsRenaming(null);
-    
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-  };
-
   const startNewProject = () => {
     setActiveProject(null);
     setDropdownOpen(null);
@@ -122,12 +77,6 @@ function App() {
       return;
     }
     
-    const hexRegex = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
-    if (!hexRegex.test(inputHex)) {
-        alert("HEX 코드 또는 'Spacing'을 입력해주세요.");
-        return;
-    }
-
     setLoading(true);
     const formattedHex = inputHex.startsWith("#") ? inputHex : "#" + inputHex;
     const { palette, targetLevel } = calculatePalette(formattedHex);
@@ -138,91 +87,26 @@ function App() {
       aiName = res.data.name;
     } catch (err) { console.error(err); }
 
-    let currentProjectName = activeProject;
-    let newProjectsState = { ...projects };
-
-    if (!currentProjectName) {
-        let counter = 1;
-        while (newProjectsState[`새 프로젝트 ${counter}`]) {
-            counter++;
-        }
-        currentProjectName = `새 프로젝트 ${counter}`;
-        newProjectsState[currentProjectName] = [];
-    }
+    const updatedProjects = { ...projects };
+    let currentP = activeProject || "새 프로젝트";
+    if (!updatedProjects[currentP]) updatedProjects[currentP] = [];
 
     const newData = { 
         id: Date.now(),
         userInput: formattedHex,
         name: aiName, 
         palette: palette, 
-        target: targetLevel,
-        isBookmarked: false,
-        type: 'color' 
+        type: 'color',
+        isBookmarked: false 
     };
 
-    const projectList = newProjectsState[currentProjectName] || [];
-    newProjectsState[currentProjectName] = [newData, ...projectList];
-
-    setProjects(newProjectsState);
-    setActiveProject(currentProjectName);
+    updatedProjects[currentP] = [newData, ...updatedProjects[currentP]];
+    setProjects(updatedProjects);
+    setActiveProject(currentP);
     setLoading(false); 
     setInputHex("");
 
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: newProjectsState });
-  };
-
-  const togglePlatform = (type) => {
-    if (type === 'all') {
-      setSelectedPlatforms(['all']); 
-    } else {
-      setSelectedPlatforms(prev => {
-        const filtered = prev.filter(p => p !== 'all'); 
-        if (filtered.includes(type)) return filtered.filter(p => p !== type);
-        return [...filtered, type];
-      });
-    }
-  };
-
-  const saveProjectData = async (dataToSave) => {
-    const updatedProjects = { ...projects };
-    const currentList = [dataToSave, ...(updatedProjects[activeProject] || [])];
-    updatedProjects[activeProject] = currentList;
-    setProjects(updatedProjects);
     await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-  };
-
-  const generateSpacingTokens = async () => {
-    if (selectedPlatforms.length === 0) return;
-    setLoading(true);
-    setShowSpacingOptions(false);
-
-    let maxStep = 9; 
-    if (selectedPlatforms.includes('all') || selectedPlatforms.includes('pc')) maxStep = 15; 
-    else if (selectedPlatforms.includes('tablet')) maxStep = 12; 
-
-    const newPalette = [];
-    newPalette.push({ level: 'sp0.5', value: 2, isVisible: true });
-
-    for (let i = 1; i <= maxStep; i++) {
-        newPalette.push({ level: `sp${i}`, value: i * 4, isVisible: true });
-    }
-
-    if (selectedPlatforms.includes('all') || selectedPlatforms.includes('pc')) {
-        newPalette.push({ level: 'sp20', value: 80, isVisible: true });
-        newPalette.push({ level: 'sp25', value: 100, isVisible: true });
-    }
-
-    saveProjectData({ 
-        id: Date.now(),
-        userInput: `Spacing 요청 (${selectedPlatforms.join(', ')})`,
-        name: `Spacing`, 
-        palette: newPalette, 
-        type: 'spacing',
-        isBookmarked: false 
-    });
-
-    setLoading(false);
-    setSelectedPlatforms([]);
   };
 
   const copyToClipboard = (text) => {
@@ -231,184 +115,33 @@ function App() {
     setTimeout(() => setToast(null), 2000);
   };
 
-  const addToVault = async (itemIndex) => {
-    const updatedProjects = { ...projects };
-    const items = [...updatedProjects[activeProject]];
-    
-    if (items[itemIndex].isBookmarked) {
-        setToast("이미 보관함에 저장된 항목입니다.");
-        setTimeout(() => setToast(null), 2000);
-        return;
-    }
-
-    const resetPalette = items[itemIndex].palette.map(chip => ({
-        ...chip,
-        isVisible: true
-    }));
-    items[itemIndex].palette = resetPalette;
-
-    items[itemIndex].isBookmarked = true;
-    updatedProjects[activeProject] = items;
-    setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-    setToast("보관함에 추가되었습니다!");
-    setTimeout(() => setToast(null), 2000);
-  };
-
-  const removeColorFromVault = async (itemIndex) => {
-    const updatedProjects = { ...projects };
-    const items = [...updatedProjects[activeProject]];
-    items[itemIndex].isBookmarked = false; 
-    updatedProjects[activeProject] = items;
-    setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-  };
-
-  const removeAllSpacingFromVault = async () => {
-    if (!window.confirm("보관함에서 모든 Spacing 토큰을 제거하시겠습니까?")) return;
-    
-    const updatedProjects = { ...projects };
-    const items = [...updatedProjects[activeProject]];
-
-    items.forEach(item => {
-        if (item.type === 'spacing') {
-            item.isBookmarked = false;
-        }
-    });
-
-    updatedProjects[activeProject] = items;
-    setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-  };
-
-  const toggleColorVisibility = async (itemIndex, colorIndex) => {
-    const updatedProjects = { ...projects };
-    const items = [...updatedProjects[activeProject]];
-    const updatedPalette = [...items[itemIndex].palette];
-    
-    const currentVis = updatedPalette[colorIndex].isVisible !== false;
-    updatedPalette[colorIndex].isVisible = !currentVis;
-    
-    items[itemIndex].palette = updatedPalette;
-    updatedProjects[activeProject] = items;
-    setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
-  };
-
-  const historyList = projects[activeProject] || [];
+  const historyList = activeProject ? (projects[activeProject] || []) : [];
   const displayHistory = [...historyList].reverse(); 
-  const bookmarkedList = historyList.filter(item => item.isBookmarked);
 
-  const spacingBookmarks = bookmarkedList.filter(i => i.type === 'spacing');
-  const colorBookmarks = bookmarkedList.filter(i => i.type !== 'spacing');
-
-  const mergedSpacingChips = [];
-  const seenLevels = new Set();
-  
-  spacingBookmarks.forEach((item) => {
-    const realIndex = historyList.indexOf(item); 
-    item.palette.forEach((chip, cIdx) => {
-        if (!seenLevels.has(chip.level)) {
-            seenLevels.add(chip.level);
-            mergedSpacingChips.push({ ...chip, realIndex, cIdx });
-        }
-    });
-  });
-  mergedSpacingChips.sort((a, b) => a.value - b.value);
-
-  // ▼▼▼ 화면 그리는 부분 (여기가 수정됨!) ▼▼▼
   return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
       <div className="app-container">
-        {toast && <div className="toast-notification"><Copy size={16} /> {toast}</div>}
+        {toast && <div className="toast-notification">{toast}</div>}
 
         <div className="sidebar">
           <div className="sidebar-top">
             <div className="logo-area" onClick={startNewProject} style={{ cursor: 'pointer' }}>
               <h1>🎨 디자인 시스템 봇</h1>
             </div>
-
             <button className="new-chat-btn" onClick={startNewProject}>
               <Plus size={16} /> 새로운 프로젝트 추가
             </button>
-
-            <div className="project-list-area">
-              <div className="list-title">나의 디자인시스템</div>
-              <div className="project-items">
-                {Object.keys(projects).map(p => (
-                  <div
-                    key={p}
-                    className={`project-item-group ${activeProject === p ? 'active' : ''}`}
-                    onClick={() => setActiveProject(p)}
-                  >
-                    {isRenaming === p ? (
-                      <div className="rename-container" onClick={(e) => e.stopPropagation()}>
-                        <input
-                          className="rename-input"
-                          value={renameInput}
-                          onChange={(e) => setRenameInput(e.target.value)}
-                          autoFocus
-                          onKeyDown={(e) => { if (e.key === 'Enter') saveRename(); }}
-                        />
-                        <button className="rename-save-btn" onClick={saveRename}><Save size={14} /></button>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="project-name-wrapper">
-                          <Folder size={16} />
-                          <span className="truncate">{p}</span>
-                        </div>
-                        <button
-                          className="action-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDropdownOpen(dropdownOpen === p ? null : p);
-                          }}
-                        >
-                          <MoreHorizontal size={16} />
-                        </button>
-                        {dropdownOpen === p && (
-                          <div className="dropdown-menu" onMouseLeave={() => setDropdownOpen(null)}>
-                            <button onClick={(e) => startRenaming(p, e)}><Edit3 size={14} /> 이름 변경</button>
-                            <button className="delete-opt" onClick={(e) => deleteProject(p, e)}><Trash2 size={14} /> 삭제</button>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
-          {/* 하단 로그인/프로필 영역 */}
           <div className="user-profile">
             {!user ? (
-              <div style={{ padding: '10px', display: 'flex', justifyContent: 'center' }}>
-                <GoogleLogin
-                  onSuccess={handleLoginSuccess}
-                  onError={() => console.log('Login Failed')}
-                  theme="filled_black"
-                  shape="pill"
-                  size="medium"
-                  text="signin_with"
-                />
-              </div>
+              <GoogleLogin onSuccess={handleLoginSuccess} onError={() => console.log('Login Failed')} />
             ) : (
-              <>
-                <div className="user-info">
-                  {user.picture ? (
-                    <img src={user.picture} alt="user" referrerPolicy="no-referrer" />
-                  ) : (
-                    <div style={{width: 36, height: 36, borderRadius: '50%', background: '#666', display:'flex', alignItems:'center', justifyContent:'center'}}><User size={18}/></div>
-                  )}
-                  <div className="user-text">
-                    <p>{user.name}</p>
-                    <span style={{fontSize: '11px', color: '#888'}}>Logged in</span>
-                  </div>
-                </div>
+              <div className="user-info-box">
+                {user.picture && <img src={user.picture} alt="p" className="user-img" />}
+                <p>{user.name}님</p>
                 <button onClick={handleLogout} className="logout-btn">로그아웃</button>
-              </>
+              </div>
             )}
           </div>
         </div>
@@ -416,142 +149,32 @@ function App() {
         <div className="main-content">
           <main className="chat-area">
             {!activeProject ? (
-              <div className="welcome-screen">
-                <h2>
-                  새로운 프로젝트를 추가하시겠어요?<br />
-                  <span className="highlight-text">시스템에 필요한 컬러나 Spacing</span>을<br />
-                  입력해주세요.
-                </h2>
-              </div>
+              <div className="welcome">컬러 HEX 코드나 Spacing을 입력하세요.</div>
             ) : (
-              displayHistory.map((item, idx) => {
-                const originalIndex = historyList.length - 1 - idx;
-                return (
-                  <div key={item.id || idx} className="history-item-group animate-fade-in-up">
-                    <div className="user-message">
-                      <div className="bubble">{item.userInput}</div>
-                    </div>
-                    <div className="bot-response">
-                      <div className="bot-avatar">🤖</div>
-                      <div className="response-card" style={{ borderColor: item.isBookmarked ? '#3b82f6' : '#374151' }}>
-                        <div className="card-header">
-                          <div className="tag-row">
-                            <span className="ai-tag">{item.type === 'spacing' ? 'Spacing' : 'Color'}</span>
-                            <h4 className="card-title">{item.name}</h4>
-                          </div>
-                          <button onClick={() => addToVault(originalIndex)} className="save-button">저장</button>
+              displayHistory.map((item, idx) => (
+                <div key={item.id || idx} className="bot-response">
+                  <div className="response-card">
+                    <h4>{item.name}</h4>
+                    <div className="palette-grid">
+                      {item.palette.map((color, i) => (
+                        <div key={i} className="color-item" onClick={() => copyToClipboard(color.hex)}>
+                          <div className="color-box" style={{ backgroundColor: color.hex }}></div>
+                          <span>{color.level}</span>
                         </div>
-
-                        {item.type === 'spacing' ? (
-                          <div className="spacing-grid">
-                            {item.palette.map((sp, i) => (
-                              <div key={i} className="spacing-item" onClick={() => copyToClipboard(`${sp.value}px`)}>
-                                <div className="spacing-box"><p className="sp-label">{sp.level}</p> </div>
-                              </div>
-                            ))}
-                          </div>
-                        ) : (
-                          <div className="palette-grid">
-                            {item.palette.map((color, i) => (
-                              <div key={i} className="color-item">
-                                <div className="color-box" style={{ backgroundColor: color.hex }} onClick={() => copyToClipboard(color.hex)}></div>
-                                <p className="level-text">{color.level}</p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      ))}
                     </div>
                   </div>
-                );
-              })
-            )}
-
-            {showSpacingOptions && (
-              <div className="bot-response animate-fade-in-up">
-                <div className="bot-avatar">🤖</div>
-                <div className="response-card spacing-selection-card">
-                  <p className="mb-4">어떤 프로젝트 인가요?</p>
-                  <div className="flex flex-wrap gap-3 mb-6">
-                    <button className={`option-btn ${selectedPlatforms.includes('pc') ? 'active' : ''}`} onClick={() => togglePlatform('pc')}>PC</button>
-                    <button className={`option-btn ${selectedPlatforms.includes('tablet') ? 'active' : ''}`} onClick={() => togglePlatform('tablet')}>Tablet</button>
-                    <button className={`option-btn ${selectedPlatforms.includes('mobile') ? 'active' : ''}`} onClick={() => togglePlatform('mobile')}>Mobile</button>
-                    <button className={`option-btn ${selectedPlatforms.includes('all') ? 'active' : ''}`} onClick={() => togglePlatform('all')}>모두 해당</button>
-                  </div>
-                  <button
-                    className={`generate-spacing-btn ${selectedPlatforms.length > 0 ? 'visible' : ''}`}
-                    onClick={generateSpacingTokens}
-                  >
-                    Spacing 토큰 생성하기
-                  </button>
                 </div>
-              </div>
+              ))
             )}
-
-            {loading && <div className="loading-bubble"><Loader2 className="animate-spin" size={16} /> 생각 중...</div>}
-            <div ref={scrollRef} style={{ height: '1px' }}></div>
+            <div ref={scrollRef}></div>
           </main>
 
           <div className="input-area">
             <form onSubmit={handleGenerate} className="input-form">
-              <input placeholder="HEX 코드 또는 'Spacing' 입력" value={inputHex} onChange={(e) => setInputHex(e.target.value)} />
+              <input placeholder="HEX 코드 입력" value={inputHex} onChange={(e) => setInputHex(e.target.value)} />
               <button type="submit"><Send size={20} /></button>
             </form>
-          </div>
-        </div>
-
-        <div className="vault-sidebar">
-          <h3> 🗂️ 내 보관함</h3>
-          <div className="vault-list">
-            {mergedSpacingChips.length > 0 && (
-              <div className="vault-item">
-                <div className="vault-header">
-                  <h4>Spacing</h4>
-                  <button onClick={removeAllSpacingFromVault} className="vault-remove-btn">제거</button>
-                </div>
-                <div className="vault-palette-grid">
-                  {mergedSpacingChips.map((chip, idx) => (
-                    <div key={idx} className="vault-chip-wrapper">
-                      {chip.isVisible !== false ? (
-                        <div className="vault-chip" style={{ backgroundColor: '#3e3e44' }} onClick={() => copyToClipboard(`${chip.value}px`)}>
-                          <div className="vault-chip-overlay" onClick={(e) => { e.stopPropagation(); toggleColorVisibility(chip.realIndex, chip.cIdx); }}><X size={14} color="white" /></div>
-                        </div>
-                      ) : (
-                        <button className="vault-chip-restore" onClick={() => toggleColorVisibility(chip.realIndex, chip.cIdx)}><Plus size={14} /></button>
-                      )}
-                      <span className="vault-chip-label">{chip.level}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {colorBookmarks.map((item, idx) => {
-              const realIndex = historyList.indexOf(item);
-              return (
-                <div key={idx} className="vault-item">
-                  <div className="vault-header">
-                    <h4>{item.name}</h4>
-                    <button onClick={() => removeColorFromVault(realIndex)} className="vault-remove-btn">제거</button>
-                  </div>
-                  <div className="vault-palette-grid">
-                    {item.palette.map((chip, cIdx) => (
-                      <div key={cIdx} className="vault-chip-wrapper">
-                        {chip.isVisible !== false ? (
-                          <div className="vault-chip" style={{ backgroundColor: chip.hex }} onClick={() => copyToClipboard(chip.hex)}>
-                            <div className="vault-chip-overlay" onClick={(e) => { e.stopPropagation(); toggleColorVisibility(realIndex, cIdx); }}><X size={14} color="white" /></div>
-                          </div>
-                        ) : (
-                          <button className="vault-chip-restore" onClick={() => toggleColorVisibility(realIndex, cIdx)}><Plus size={14} /></button>
-                        )}
-                        <span className="vault-chip-label">{chip.level}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )
-            })}
-            {mergedSpacingChips.length === 0 && colorBookmarks.length === 0 && <p className="empty-msg">보관된 토큰이 없습니다.</p>}
           </div>
         </div>
       </div>
