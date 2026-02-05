@@ -94,13 +94,30 @@ if (fs.existsSync(webPathInParent)) {
 }
 
 // 3. 빌드 폴더(dist 또는 build) 찾기
-let clientBuildPath = null;
-if (finalWebPath) {
-    const dist = path.join(finalWebPath, 'dist');
-    const build = path.join(finalWebPath, 'build');
+// ▼▼▼ 이 코드로 해당 구역을 싹 덮어씌우세요! ▼▼▼
+
+if (clientBuildPath) {
+    console.log(`🍊 화면 파일 연결 성공! 경로: ${clientBuildPath}`);
     
-    if (fs.existsSync(dist)) clientBuildPath = dist;
-    else if (fs.existsSync(build)) clientBuildPath = build;
+    // 1. 빌드 폴더 전체를 정적 파일 저장소로 지정
+    app.use(express.static(clientBuildPath));
+    
+    // 2. [추가] static 폴더를 명시적으로 지정 (경로 꼬임 방지)
+    app.use('/static', express.static(path.join(clientBuildPath, 'static')));
+
+    // 3. [중요] API 라우트가 아닌 모든 요청은 index.html로 보내기
+    // 이 코드는 반드시 파일의 다른 app.get 보다 아래, app.listen 바로 위에 있어야 합니다.
+    app.get('*', (req, res) => {
+        // API 요청은 제외하고 index.html 서빙
+        if (!req.path.startsWith('/api/')) {
+            res.sendFile(path.resolve(clientBuildPath, 'index.html'));
+        }
+    });
+} else {
+    console.log(`🚨 화면 파일을 못 찾았습니다.`);
+    app.get('*', (req, res) => {
+        res.status(404).send("<h1>빌드 파일을 찾을 수 없습니다. 배포 설정을 확인하세요.</h1>");
+    });
 }
 
 // 4. 화면 연결 (찾았으면 연결, 못 찾았으면 안내)
