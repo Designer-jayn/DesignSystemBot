@@ -1,12 +1,329 @@
-return (
-    /* 🚨 중요: GoogleOAuthProvider로 전체를 감싸야 로그인이 작동합니다! */
+import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
+import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google';
+import { jwtDecode } from "jwt-decode";
+import { calculatePalette } from './utils';
+import { Trash2, Plus, Save, User, Send, Folder, MoreHorizontal, Edit3, Star, Copy, Loader2, X } from 'lucide-react'; 
+import './App.css'; 
+
+const CLIENT_ID = "997761035180-ho629l7o1e8ec1qhkmp6ona5mll5nbb5.apps.googleusercontent.com"; 
+
+function App() {
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('designBotUser');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
+
+  const [projects, setProjects] = useState({ "기본 프로젝트": [] });
+  const [activeProject, setActiveProject] = useState("기본 프로젝트");
+  const [inputHex, setInputHex] = useState("");
+  const [loading, setLoading] = useState(false); 
+  const [showSpacingOptions, setShowSpacingOptions] = useState(false); 
+  const [selectedPlatforms, setSelectedPlatforms] = useState([]); 
+  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [isRenaming, setIsRenaming] = useState(null);
+  const [renameInput, setRenameInput] = useState("");
+  
+  const scrollRef = useRef(null);
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    if (user && user.email) fetchUserData(user.email);
+  }, [user]);
+
+  // 자동 스크롤
+  useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [loading, activeProject, showSpacingOptions]);
+
+  const handleLoginSuccess = (credentialResponse) => {
+    const decoded = jwtDecode(credentialResponse.credential);
+    setUser(decoded);
+    localStorage.setItem('designBotUser', JSON.stringify(decoded)); 
+    fetchUserData(decoded.email);
+  };
+
+  const fetchUserData = async (email) => {
+    try {
+      const res = await axios.get(`https://designsystem.up.railway.app/api/projects/${email}`);
+      setProjects(res.data || { "기본 프로젝트": [] });
+    } catch (err) { console.error(err); }
+  };
+
+  const handleLogout = () => {
+    googleLogout();
+    setUser(null);
+    setProjects({ "기본 프로젝트": [] });
+    localStorage.removeItem('designBotUser'); 
+  };
+
+  const deleteProject = async (projectName, e) => {
+    e.stopPropagation();
+    if (Object.keys(projects).length === 1) {
+      alert("최소 하나의 프로젝트는 있어야 합니다.");
+      return;
+    }
+    if (!window.confirm(`'${projectName}' 프로젝트를 삭제하시겠습니까?`)) return;
+
+    const updatedProjects = { ...projects };
+    delete updatedProjects[projectName];
+
+    if (activeProject === projectName) {
+      setActiveProject(Object.keys(updatedProjects)[0]);
+    }
+
+    setProjects(updatedProjects);
+    setDropdownOpen(null);
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+  };
+
+  const startRenaming = (projectName, e) => {
+    e.stopPropagation();
+    setIsRenaming(projectName);
+    setRenameInput(projectName);
+    setDropdownOpen(null); 
+  };
+
+  const saveRename = async () => {
+    if (!renameInput || renameInput === isRenaming) {
+      setIsRenaming(null);
+      return;
+    }
+    
+    const updatedProjects = { ...projects };
+    updatedProjects[renameInput] = updatedProjects[isRenaming];
+    delete updatedProjects[isRenaming];
+
+    setProjects(updatedProjects);
+    setActiveProject(renameInput);
+    setIsRenaming(null);
+    
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+  };
+
+  const startNewProject = () => {
+    setActiveProject(null);
+    setDropdownOpen(null);
+    setIsRenaming(null);
+    setShowSpacingOptions(false);
+    setInputHex("");
+  };
+
+  const handleGenerate = async (e) => {
+    e.preventDefault();
+    if (!inputHex) return;
+
+    if (inputHex.toLowerCase().includes("spacing") || inputHex.includes("스페이싱")) {
+      setShowSpacingOptions(true); 
+      setSelectedPlatforms([]); 
+      setInputHex("");
+      return;
+    }
+    
+    const hexRegex = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+    if (!hexRegex.test(inputHex)) {
+        alert("HEX 코드 또는 'Spacing'을 입력해주세요.");
+        return;
+    }
+
+    setLoading(true);
+    const formattedHex = inputHex.startsWith("#") ? inputHex : "#" + inputHex;
+    const { palette, targetLevel } = calculatePalette(formattedHex);
+    
+    let aiName = `Color-${formattedHex}`;
+    try {
+      const res = await axios.post('https://designsystem.up.railway.app/api/ai-naming', { hex: formattedHex });
+      aiName = res.data.name;
+    } catch (err) { console.error(err); }
+
+    let currentProjectName = activeProject;
+    let newProjectsState = { ...projects };
+
+    if (!currentProjectName) {
+        let counter = 1;
+        while (newProjectsState[`새 프로젝트 ${counter}`]) {
+            counter++;
+        }
+        currentProjectName = `새 프로젝트 ${counter}`;
+        newProjectsState[currentProjectName] = [];
+    }
+
+    const newData = { 
+        id: Date.now(),
+        userInput: formattedHex,
+        name: aiName, 
+        palette: palette, 
+        target: targetLevel,
+        isBookmarked: false,
+        type: 'color' 
+    };
+
+    const projectList = newProjectsState[currentProjectName] || [];
+    newProjectsState[currentProjectName] = [newData, ...projectList];
+
+    setProjects(newProjectsState);
+    setActiveProject(currentProjectName);
+    setLoading(false); 
+    setInputHex("");
+
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: newProjectsState });
+  };
+
+  const togglePlatform = (type) => {
+    if (type === 'all') {
+      setSelectedPlatforms(['all']); 
+    } else {
+      setSelectedPlatforms(prev => {
+        const filtered = prev.filter(p => p !== 'all'); 
+        if (filtered.includes(type)) return filtered.filter(p => p !== type);
+        return [...filtered, type];
+      });
+    }
+  };
+
+  const saveProjectData = async (dataToSave) => {
+    const updatedProjects = { ...projects };
+    const currentList = [dataToSave, ...(updatedProjects[activeProject] || [])];
+    updatedProjects[activeProject] = currentList;
+    setProjects(updatedProjects);
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+  };
+
+  const generateSpacingTokens = async () => {
+    if (selectedPlatforms.length === 0) return;
+    setLoading(true);
+    setShowSpacingOptions(false);
+
+    let maxStep = 9; 
+    if (selectedPlatforms.includes('all') || selectedPlatforms.includes('pc')) maxStep = 15; 
+    else if (selectedPlatforms.includes('tablet')) maxStep = 12; 
+
+    const newPalette = [];
+    newPalette.push({ level: 'sp0.5', value: 2, isVisible: true });
+
+    for (let i = 1; i <= maxStep; i++) {
+        newPalette.push({ level: `sp${i}`, value: i * 4, isVisible: true });
+    }
+
+    if (selectedPlatforms.includes('all') || selectedPlatforms.includes('pc')) {
+        newPalette.push({ level: 'sp20', value: 80, isVisible: true });
+        newPalette.push({ level: 'sp25', value: 100, isVisible: true });
+    }
+
+    saveProjectData({ 
+        id: Date.now(),
+        userInput: `Spacing 요청 (${selectedPlatforms.join(', ')})`,
+        name: `Spacing`, 
+        palette: newPalette, 
+        type: 'spacing',
+        isBookmarked: false 
+    });
+
+    setLoading(false);
+    setSelectedPlatforms([]);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    setToast(`복사 완료! ${text}`);
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const addToVault = async (itemIndex) => {
+    const updatedProjects = { ...projects };
+    const items = [...updatedProjects[activeProject]];
+    
+    if (items[itemIndex].isBookmarked) {
+        setToast("이미 보관함에 저장된 항목입니다.");
+        setTimeout(() => setToast(null), 2000);
+        return;
+    }
+
+    const resetPalette = items[itemIndex].palette.map(chip => ({
+        ...chip,
+        isVisible: true
+    }));
+    items[itemIndex].palette = resetPalette;
+
+    items[itemIndex].isBookmarked = true;
+    updatedProjects[activeProject] = items;
+    setProjects(updatedProjects);
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    setToast("보관함에 추가되었습니다!");
+    setTimeout(() => setToast(null), 2000);
+  };
+
+  const removeColorFromVault = async (itemIndex) => {
+    const updatedProjects = { ...projects };
+    const items = [...updatedProjects[activeProject]];
+    items[itemIndex].isBookmarked = false; 
+    updatedProjects[activeProject] = items;
+    setProjects(updatedProjects);
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+  };
+
+  const removeAllSpacingFromVault = async () => {
+    if (!window.confirm("보관함에서 모든 Spacing 토큰을 제거하시겠습니까?")) return;
+    
+    const updatedProjects = { ...projects };
+    const items = [...updatedProjects[activeProject]];
+
+    items.forEach(item => {
+        if (item.type === 'spacing') {
+            item.isBookmarked = false;
+        }
+    });
+
+    updatedProjects[activeProject] = items;
+    setProjects(updatedProjects);
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+  };
+
+  const toggleColorVisibility = async (itemIndex, colorIndex) => {
+    const updatedProjects = { ...projects };
+    const items = [...updatedProjects[activeProject]];
+    const updatedPalette = [...items[itemIndex].palette];
+    
+    const currentVis = updatedPalette[colorIndex].isVisible !== false;
+    updatedPalette[colorIndex].isVisible = !currentVis;
+    
+    items[itemIndex].palette = updatedPalette;
+    updatedProjects[activeProject] = items;
+    setProjects(updatedProjects);
+    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+  };
+
+  const historyList = projects[activeProject] || [];
+  const displayHistory = [...historyList].reverse(); 
+  const bookmarkedList = historyList.filter(item => item.isBookmarked);
+
+  const spacingBookmarks = bookmarkedList.filter(i => i.type === 'spacing');
+  const colorBookmarks = bookmarkedList.filter(i => i.type !== 'spacing');
+
+  const mergedSpacingChips = [];
+  const seenLevels = new Set();
+  
+  spacingBookmarks.forEach((item) => {
+    const realIndex = historyList.indexOf(item); 
+    item.palette.forEach((chip, cIdx) => {
+        if (!seenLevels.has(chip.level)) {
+            seenLevels.add(chip.level);
+            mergedSpacingChips.push({ ...chip, realIndex, cIdx });
+        }
+    });
+  });
+  mergedSpacingChips.sort((a, b) => a.value - b.value);
+
+  // ▼▼▼ 화면 그리는 부분 (여기가 수정됨!) ▼▼▼
+  return (
     <GoogleOAuthProvider clientId={CLIENT_ID}>
       <div className="app-container">
         {toast && <div className="toast-notification"><Copy size={16} /> {toast}</div>}
 
         <div className="sidebar">
           <div className="sidebar-top">
-            {/* 로고 영역 */}
             <div className="logo-area" onClick={startNewProject} style={{ cursor: 'pointer' }}>
               <h1>🎨 디자인 시스템 봇</h1>
             </div>
@@ -15,7 +332,6 @@ return (
               <Plus size={16} /> 새로운 프로젝트 추가
             </button>
 
-            {/* 프로젝트 리스트 */}
             <div className="project-list-area">
               <div className="list-title">나의 디자인시스템</div>
               <div className="project-items">
@@ -65,10 +381,9 @@ return (
             </div>
           </div>
 
-          {/* ▼▼▼ [수정됨] 사이드바 하단: 로그인 버튼 & 프로필 영역 ▼▼▼ */}
+          {/* 하단 로그인/프로필 영역 */}
           <div className="user-profile">
             {!user ? (
-              // 1. 로그인이 안 되어 있을 때 -> 구글 로그인 버튼 표시
               <div style={{ padding: '10px', display: 'flex', justifyContent: 'center' }}>
                 <GoogleLogin
                   onSuccess={handleLoginSuccess}
@@ -80,10 +395,8 @@ return (
                 />
               </div>
             ) : (
-              // 2. 로그인이 되어 있을 때 -> 프로필 정보 표시 (안전장치 추가됨)
               <>
                 <div className="user-info">
-                  {/* user.picture가 있으면 이미지, 없으면 기본 아이콘 */}
                   {user.picture ? (
                     <img src={user.picture} alt="user" referrerPolicy="no-referrer" />
                   ) : (
@@ -98,7 +411,6 @@ return (
               </>
             )}
           </div>
-          {/* ▲▲▲ 여기까지 수정됨 ▲▲▲ */}
         </div>
 
         <div className="main-content">
@@ -245,3 +557,6 @@ return (
       </div>
     </GoogleOAuthProvider>
   );
+}
+
+export default App;
