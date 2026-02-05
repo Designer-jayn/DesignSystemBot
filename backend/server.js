@@ -93,42 +93,35 @@ if (fs.existsSync(webPathInParent)) {
     finalWebPath = webPathInCurrent;
 }
 
-// 3. 빌드 폴더(dist 또는 build) 찾기
-let clientBuildPath = null;
-if (finalWebPath) {
-    const dist = path.join(finalWebPath, 'dist');
-    const build = path.join(finalWebPath, 'build');
+// // 3. 빌드 폴더(dist 또는 build) 찾기
+// let clientBuildPath = null;
+// if (finalWebPath) {
+//     const dist = path.join(finalWebPath, 'dist');
+//     const build = path.join(finalWebPath, 'build');
     
-    if (fs.existsSync(dist)) clientBuildPath = dist;
-    else if (fs.existsSync(build)) clientBuildPath = build;
-}
+//     if (fs.existsSync(dist)) clientBuildPath = dist;
+//     else if (fs.existsSync(build)) clientBuildPath = build;
+// }
 
 
 // ▼▼▼ 이 코드로 해당 구역을 싹 덮어씌우세요! ▼▼▼
 
-if (clientBuildPath) {
-    console.log(`🍊 화면 파일 연결 성공! 경로: ${clientBuildPath}`);
-    
-    // 1. 빌드 폴더 전체를 정적 파일 저장소로 지정
-    app.use(express.static(clientBuildPath));
-    
-    // 2. [추가] static 폴더를 명시적으로 지정 (경로 꼬임 방지)
-    app.use('/static', express.static(path.join(clientBuildPath, 'static')));
+// ---------------------------------------------------------
+// 🕵️‍♀️ [최종 해결] Railway용 경로 고정 설정
+// ---------------------------------------------------------
 
-    // 3. [중요] API 라우트가 아닌 모든 요청은 index.html로 보내기
-    // 이 코드는 반드시 파일의 다른 app.get 보다 아래, app.listen 바로 위에 있어야 합니다.
-    app.get(/^(?!\/api).+/, (req, res) => {
-        // API 요청은 제외하고 index.html 서빙
-        if (!req.path.startsWith('/api/')) {
-            res.sendFile(path.resolve(clientBuildPath, 'index.html'));
-        }
-    });
-} else {
-    console.log(`🚨 화면 파일을 못 찾았습니다.`);
-    app.get('*', (req, res) => {
-        res.status(404).send("<h1>빌드 파일을 찾을 수 없습니다. 배포 설정을 확인하세요.</h1>");
-    });
-}
+// Railway 환경에서는 모든 파일이 /app 아래에 모입니다.
+const clientBuildPath = path.join(__dirname, '../web/build');
+
+console.log(`🍊 화면 파일 경로: ${clientBuildPath}`);
+
+app.use(express.static(clientBuildPath));
+app.use('/static', express.static(path.join(clientBuildPath, 'static')));
+
+// 핵심: 따옴표 '*' 대신 정규식을 써서 에러 방지
+app.get(/^(?!\/api).+/, (req, res) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+});
 
 // 5. [핵심 수정] 모든 요청 받아주기 (따옴표 대신 /.*/ 사용)
 app.get(/.*/, (req, res) => {
