@@ -425,7 +425,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
         </div>
         <div className="user-profile">
             <div className="user-info">
-                {user.picture && <img src={user.picture} alt="p" />}
+                {user.picture && <img src={user?.picture} alt="p" />}
                 <div className="user-text"><p>{user.name}</p></div>
             </div>
             <button onClick={handleLogout} className="logout-btn">로그아웃</button>
