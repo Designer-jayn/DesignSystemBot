@@ -94,6 +94,16 @@ if (fs.existsSync(webPathInParent)) {
 }
 
 // 3. 빌드 폴더(dist 또는 build) 찾기
+let clientBuildPath = null;
+if (finalWebPath) {
+    const dist = path.join(finalWebPath, 'dist');
+    const build = path.join(finalWebPath, 'build');
+    
+    if (fs.existsSync(dist)) clientBuildPath = dist;
+    else if (fs.existsSync(build)) clientBuildPath = build;
+}
+
+
 // ▼▼▼ 이 코드로 해당 구역을 싹 덮어씌우세요! ▼▼▼
 
 if (clientBuildPath) {
@@ -118,21 +128,6 @@ if (clientBuildPath) {
     app.get('*', (req, res) => {
         res.status(404).send("<h1>빌드 파일을 찾을 수 없습니다. 배포 설정을 확인하세요.</h1>");
     });
-}
-
-// 4. 화면 연결 (찾았으면 연결, 못 찾았으면 안내)
-// ▼▼▼▼▼ 여기부터 끝까지 복사해서 덮어씌우세요! ▼▼▼▼▼
-
-// 4. 화면 연결 (찾았으면 연결, 못 찾았으면 안내)
-if (clientBuildPath) {
-    console.log(`🍊 화면 파일 연결 성공! 경로: ${clientBuildPath}`);
-    // 1. 폴더 자체를 정적 폴더로 지정
-    app.use(express.static(clientBuildPath));
-
-    // 2. [추가] static 폴더 안의 파일들을 직접 서빙하도록 명시 (이게 핵심!)
-    app.use('/static', express.static(path.join(clientBuildPath, 'static')));
-} else {
-    console.log(`🚨 화면 파일을 못 찾았습니다.`);
 }
 
 // 5. [핵심 수정] 모든 요청 받아주기 (따옴표 대신 /.*/ 사용)
