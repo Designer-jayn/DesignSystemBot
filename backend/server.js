@@ -117,7 +117,7 @@ if (clientBuildPath) {
 
     // 3. [중요] API 라우트가 아닌 모든 요청은 index.html로 보내기
     // 이 코드는 반드시 파일의 다른 app.get 보다 아래, app.listen 바로 위에 있어야 합니다.
-    app.get('*', (req, res) => {
+    app.get(/^(?!\/api).+/, (req, res) => {
         // API 요청은 제외하고 index.html 서빙
         if (!req.path.startsWith('/api/')) {
             res.sendFile(path.resolve(clientBuildPath, 'index.html'));
