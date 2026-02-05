@@ -424,18 +424,18 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
 </div>
         </div>
         <div className="user-profile">
-            {/* user가 존재할 때만 내부를 보여줌 (에러 원천 차단!) */}
-            {user && (
-                <>
-                    <div className="user-info">
-                        {/* user가 있다고 확인됐으니 여기선 맘 편히 써도 됨 */}
-                        {user.picture && <img src={user.picture} alt="p" />}
-                        <div className="user-text"><p>{user.name}</p></div>
-                    </div>
-                    <button onClick={handleLogout} className="logout-btn">로그아웃</button>
-                </>
-            )}
-        </div>
+          {/* user가 존재할 때만 내부를 보여줌 (에러 원천 차단!) */}
+          {user && (
+              <>
+                  <div className="user-info">
+                      {/* user가 있다고 확인됐으니 여기선 맘 편히 써도 됨 */}
+                      {user.picture && <img src={user.picture} alt="p" />}
+                      <div className="user-text"><p>{user.name}</p></div>
+                  </div>
+                  <button onClick={handleLogout} className="logout-btn">로그아웃</button>
+              </>
+          )}
+      </div>
       </div>
 
       <div className="main-content">
