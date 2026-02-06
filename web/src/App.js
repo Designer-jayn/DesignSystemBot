@@ -347,7 +347,9 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
   mergedSpacingChips.sort((a, b) => a.value - b.value);
 
 
-  return (
+  return (   
+    
+    <GoogleOAuthProvider clientId={CLIENT_ID}>
     <div className="app-container">
       {toast && <div className="toast-notification"><Copy size={16} /> {toast}</div>}
 
@@ -424,18 +426,25 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
 </div>
         </div>
         <div className="user-profile">
-          {/* user가 존재할 때만 내부를 보여줌 (에러 원천 차단!) */}
-          {user && (
-              <>
-                  <div className="user-info">
-                      {/* user가 있다고 확인됐으니 여기선 맘 편히 써도 됨 */}
-                      {user.picture && <img src={user.picture} alt="p" />}
-                      <div className="user-text"><p>{user.name}</p></div>
-                  </div>
-                  <button onClick={handleLogout} className="logout-btn">로그아웃</button>
-              </>
+          {/* 👇 유저가 없으면(!user) 로그인 버튼을 보여줘라! */}
+          {!user ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
+              <GoogleLogin 
+                onSuccess={handleLoginSuccess} 
+                onError={() => console.log('Login Failed')} 
+              />
+            </div>
+          ) : (
+            // 👇 유저가 있으면 프로필을 보여줘라!
+            <>
+              <div className="user-info">
+                  {user.picture && <img src={user.picture} alt="p" />}
+                  <div className="user-text"><p>{user.name}</p></div>
+              </div>
+              <button onClick={handleLogout} className="logout-btn">로그아웃</button>
+            </>
           )}
-      </div>
+        </div>
       </div>
 
       <div className="main-content">
@@ -536,7 +545,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
       </div>
 
       <div className="vault-sidebar">
-          <h3> 🗂️ 내 보관함</h3>
+          <h3> 🗂️ 프로젝트 보관함</h3>
           <div className="vault-list">
             
             {/* Spacing 통합 카드 */}
@@ -594,6 +603,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
           </div>
       </div>
     </div>
+    </GoogleOAuthProvider>
   );
 }
 export default App;
