@@ -68,7 +68,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
 
   const fetchUserData = async (email) => {
     try {
-      const res = await axios.get(`https://designsystem.up.railway.app/api/projects/${email}`);
+      const res = await axios.get(`https://designsystembot.onrender.com/api/projects/${email}`);
       setProjects(res.data || { "기본 프로젝트": [] });
     } catch (err) { console.error(err); }
   };
@@ -100,7 +100,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     setDropdownOpen(null);
     // 백엔드 저장
     // await axios.post('http://localhost:5001/api/projects', { email: user.email, projects: updatedProjects });
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
   };
 
 
@@ -130,7 +130,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     setIsRenaming(null);
     
     // 백엔드 저장
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
   };
 
   // 새 프로젝트(새 채팅) 모드로 진입
@@ -146,7 +146,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     e.preventDefault();
     if (!inputHex) return;
 
-    // Spacing 옵션 처리 (기존 동일)
+    // Spacing 옵션 처리
     if (inputHex.toLowerCase().includes("spacing") || inputHex.includes("스페이싱")) {
       setShowSpacingOptions(true); 
       setSelectedPlatforms([]); 
@@ -154,7 +154,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
       return;
     }
     
-    // 유효성 검사 (기존 동일)
+    // 유효성 검사
     const hexRegex = /^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
     if (!hexRegex.test(inputHex)) {
         alert("HEX 코드 또는 'Spacing'을 입력해주세요.");
@@ -163,32 +163,35 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
 
     setLoading(true);
     const formattedHex = inputHex.startsWith("#") ? inputHex : "#" + inputHex;
+    
+    // 1️⃣ [중요] 팔레트를 먼저 계산합니다! (100~900 생성)
     const { palette, targetLevel } = calculatePalette(formattedHex);
     
-    // AI 이름 생성 (기존 동일)
+    // 2️⃣ [핵심 변경] AI에게 보낼 '대표 선수(500번)' 뽑기
+    // 팔레트 목록에서 level이 500인 색상을 찾습니다.
+    const standardColor = palette.find(c => c.level === 500);
+    // 500번을 찾았으면 그걸 쓰고, 만약 없으면 그냥 원래 입력값(formattedHex)을 씁니다.
+    const hexForAI = standardColor ? standardColor.hex : formattedHex;
+
+    // 3️⃣ [주소 변경] AI 이름을 지을 때 'hexForAI(500번)'를 보냅니다!
     let aiName = `Color-${formattedHex}`;
     try {
-      const res = await axios.post('https://designsystem.up.railway.app/api/ai-naming', { hex: formattedHex });
+      // 👇 주소를 Render로 변경했습니다!
+      const res = await axios.post('https://designsystembot.onrender.com/api/ai-naming', { hex: hexForAI });
       aiName = res.data.name;
     } catch (err) { console.error(err); }
 
-    // 🔥 [수정됨] 현재 활성 프로젝트가 없으면(새 채팅 모드면) 새 프로젝트 이름 생성
+    // --- (아래부터는 기존 저장 로직과 동일) ---
     let currentProjectName = activeProject;
     let newProjectsState = { ...projects };
 
     if (!currentProjectName) {
-        // 이름 중복 방지: '새 프로젝트 1', '새 프로젝트 2'...
         let counter = 1;
-        while (newProjectsState[`새 프로젝트 ${counter}`]) {
-            counter++;
-        }
+        while (newProjectsState[`새 프로젝트 ${counter}`]) { counter++; }
         currentProjectName = `새 프로젝트 ${counter}`;
-        newProjectsState[currentProjectName] = []; // 새 배열 생성
-        // 여기서 미리 setProjects를 하지 않고, 아래 saveProjectData와 합쳐서 처리하거나
-        // saveProjectData 함수를 약간 수정해서 처리합니다.
+        newProjectsState[currentProjectName] = []; 
     }
 
-    // 데이터 생성
     const newData = { 
         id: Date.now(),
         userInput: formattedHex,
@@ -199,19 +202,16 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
         type: 'color' 
     };
 
-    // 저장 로직 (직접 구현 - 기존 saveProjectData 함수 대신 이 로직 사용 권장)
-    // 왜냐하면 saveProjectData는 activeProject 상태를 의존하기 때문에 
-    // 방금 만든 currentProjectName을 바로 반영하기 어려울 수 있음
     const projectList = newProjectsState[currentProjectName] || [];
     newProjectsState[currentProjectName] = [newData, ...projectList];
 
     setProjects(newProjectsState);
-    setActiveProject(currentProjectName); // 방금 만든 프로젝트로 이동!
+    setActiveProject(currentProjectName); 
     setLoading(false); 
     setInputHex("");
 
-    // 백엔드 저장
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: newProjectsState });
+    // 👇 여기도 Render 주소로 변경!
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: newProjectsState });
   };
 
   const togglePlatform = (type) => {
@@ -231,7 +231,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     const currentList = [dataToSave, ...(updatedProjects[activeProject] || [])];
     updatedProjects[activeProject] = currentList;
     setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
   };
 
   const generateSpacingTokens = async () => {
@@ -295,7 +295,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     items[itemIndex].isBookmarked = true;
     updatedProjects[activeProject] = items;
     setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
     setToast("보관함에 추가되었습니다!");
     setTimeout(() => setToast(null), 2000);
   };
@@ -306,7 +306,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     items[itemIndex].isBookmarked = false; 
     updatedProjects[activeProject] = items;
     setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
   };
 
   const removeAllSpacingFromVault = async () => {
@@ -323,7 +323,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
 
     updatedProjects[activeProject] = items;
     setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
   };
 
   // 칩 개별 토글 (보관함 내부용)
@@ -339,7 +339,7 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
     items[itemIndex].palette = updatedPalette;
     updatedProjects[activeProject] = items;
     setProjects(updatedProjects);
-    await axios.post('https://designsystem.up.railway.app/api/projects', { email: user.email, projects: updatedProjects });
+    await axios.post('https://designsystembot.onrender.com/api/projects', { email: user.email, projects: updatedProjects });
   };
 
   const historyList = projects[activeProject] || [];
