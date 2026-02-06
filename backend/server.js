@@ -56,15 +56,18 @@ app.post('/api/ai-naming', async (req, res) => {
         if (BEST_MODEL_URL) {
             // 📝 작명가 전용 프롬프트
             const prompt = `
-                You are a UI/UX Design Expert.
-                Analyze the HEX color code: ${hex}
-                
-                Task: Create ONE professional, concise English color name.
-                
-                Rules:
-                1. No abstract names like "Whispering Mist".
-                2. Use noun-based or descriptive names (e.g., Cobalt, Slate, Sage, Amber).
-                3. JUST return the name. No explanation.
+                 당신은 UI/UX 디자인 시스템 전문가입니다. 
+        HEX 코드 {hex_code}에 대해 전문적이고 간결한 영어 이름을 '단 하나'만 지어주세요.
+
+        [금지 사항]
+        - 'Whispering Mist', 'Ethereal Dream' 같은 추상적이고 난해한 표현 금지.
+        - 문장이나 설명 금지.
+
+        [권장 스타일]
+        - 색상의 본질을 잘 드러내는 명사형 단어 (예: Cobalt, Slate, Crimson, Mint, Amber)
+        - 전문적인 느낌의 두 단어 조합 (예: Royal Blue, Graphite Gray)
+
+        오직 추천하는 '이름'만 출력하세요.
             `;
 
             const response = await axios.post(
