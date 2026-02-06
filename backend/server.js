@@ -46,39 +46,79 @@ findBestModel();
 // ---------------------------------------------------------
 // 📡 API 라우트
 // ---------------------------------------------------------
+// ... (위쪽 import 부분은 그대로 두세요) ...
+
+// ---------------------------------------------------------
+// 📡 API 라우트 (여기를 수정하세요!)
+// ---------------------------------------------------------
+
+// 1. 색상 이름 짓기 (AI + 고정 모드)
 app.post('/api/ai-naming', async (req, res) => {
     const { hex } = req.body;
+    console.log(`🎨 요청 들어옴: ${hex}`); // 로그 추가
+
     try {
         if (BEST_MODEL_URL) {
-            const response = await axios.post(BEST_MODEL_URL, { contents: [{ parts: [{ text: `Analyze HEX ${hex}. Return English color name only.` }] }] });
-            return res.json({ name: response.data.candidates[0].content.parts[0].text.trim().replace(/["'\n]/g, "") });
+            // 🔥 [핵심 수정 1] 프롬프트를 구체적으로 변경
+            const prompt = `
+                You are a UI/UX Design Expert.
+                Analyze the HEX color code: ${hex}
+                
+                Task: Create ONE professional, concise English color name.
+                
+                Rules:
+                1. No abstract names like "Whispering Mist".
+                2. Use noun-based or descriptive names (e.g., Cobalt, Slate, Sage, Amber).
+                3. JUST return the name. No explanation.
+            `;
+
+            const response = await axios.post(
+                BEST_MODEL_URL, 
+                { 
+                    contents: [{ parts: [{ text: prompt }] }],
+                    // 🔥 [핵심 수정 2] temperature: 0 (창의성 끄기 -> 항상 같은 답 나옴)
+                    generationConfig: {
+                        temperature: 0,
+                        maxOutputTokens: 20
+                    }
+                }
+            );
+
+            const aiName = response.data.candidates[0].content.parts[0].text.trim().replace(/["'\n]/g, "");
+            
+            console.log(`🤖 AI 작명 성공: ${aiName}`); // 터미널에서 확인 가능!
+            return res.json({ name: aiName });
         } 
         throw new Error("AI 연결 안됨");
-    } catch (error) { const names = namer(hex); return res.json({ name: names.pantone[0].name }); }
+    } catch (error) { 
+        // AI 실패 시 라이브러리 사용
+        const names = namer(hex);
+        const fallbackName = names.pantone[0].name;
+        console.log(`📚 AI 실패/라이브러리 사용: ${fallbackName}`); // 터미널에서 확인 가능!
+        return res.json({ name: fallbackName }); 
+    }
 });
 
+// 2. 채팅 기능 (기존 유지하되 로그 추가)
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
     try {
         if (BEST_MODEL_URL) {
-            const promptText = `당신은 UI/UX 디자인 시스템 전문가입니다. 
-        HEX 코드 {hex_code}에 대해 전문적이고 간결한 영어 이름을 '단 하나'만 지어주세요.
-
-        [금지 사항]
-        - 'Whispering Mist', 'Ethereal Dream' 같은 추상적이고 난해한 표현 금지.
-        - 문장이나 설명 금지.
-
-        [권장 스타일]
-        - 색상의 본질을 잘 드러내는 명사형 단어 (예: Cobalt, Slate, Crimson, Mint, Amber)
-        - 전문적인 느낌의 두 단어 조합 (예: Royal Blue, Graphite Gray)
-
-        오직 추천하는 '이름'만 출력하세요.\n[데이터] ${JSON.stringify(readData())}\n[질문] ${message}`;
+            // 채팅은 대화니까 창의성이 좀 있어도 됨 (temperature 설정 안 함)
+            const promptText = `당신은 UI/UX 디자인 시스템 전문가입니다... (생략) ...\n[질문] ${message}`;
             const response = await axios.post(BEST_MODEL_URL, { contents: [{ parts: [{ text: promptText }] }] });
+            
+            console.log("🤖 채팅 응답 완료");
             return res.json({ response: response.data.candidates[0].content.parts[0].text });
         }
         throw new Error("AI 연결 안됨");
-    } catch (error) { return res.status(500).json({ response: "AI 연결 실패" }); }
+    } catch (error) { 
+        console.error("❌ 채팅 에러:", error.message);
+        return res.status(500).json({ response: "AI 연결 실패" }); 
+    }
 });
+
+// ... (나머지 프로젝트 저장, 경로 설정 코드는 그대로 두세요) ...
 
 app.get('/api/projects/:email', (req, res) => { res.json(readData()[req.params.email] || { "기본 프로젝트": [] }); });
 app.post('/api/projects', (req, res) => { const { email, projects } = req.body; const data = readData(); data[email] = projects; writeData(data); res.json({ success: true }); });
