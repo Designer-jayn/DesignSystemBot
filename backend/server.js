@@ -61,7 +61,18 @@ app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
     try {
         if (BEST_MODEL_URL) {
-            const promptText = `디자인 시스템 전문가로서 답해줘.\n[데이터] ${JSON.stringify(readData())}\n[질문] ${message}`;
+            const promptText = `당신은 UI/UX 디자인 시스템 전문가입니다. 
+        HEX 코드 {hex_code}에 대해 전문적이고 간결한 영어 이름을 '단 하나'만 지어주세요.
+
+        [금지 사항]
+        - 'Whispering Mist', 'Ethereal Dream' 같은 추상적이고 난해한 표현 금지.
+        - 문장이나 설명 금지.
+
+        [권장 스타일]
+        - 색상의 본질을 잘 드러내는 명사형 단어 (예: Cobalt, Slate, Crimson, Mint, Amber)
+        - 전문적인 느낌의 두 단어 조합 (예: Royal Blue, Graphite Gray)
+
+        오직 추천하는 '이름'만 출력하세요.\n[데이터] ${JSON.stringify(readData())}\n[질문] ${message}`;
             const response = await axios.post(BEST_MODEL_URL, { contents: [{ parts: [{ text: promptText }] }] });
             return res.json({ response: response.data.candidates[0].content.parts[0].text });
         }
