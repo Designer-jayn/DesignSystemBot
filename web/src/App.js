@@ -3,12 +3,32 @@ import axios from 'axios';
 import { GoogleOAuthProvider, GoogleLogin, googleLogout } from '@react-oauth/google';
 import { jwtDecode } from "jwt-decode";
 import { calculatePalette } from './utils';
-import { Trash2, Plus, Save, User, Send, Folder, MoreHorizontal, Edit3, Star, Copy, Loader2, X } from 'lucide-react'; 
+import { Trash2, Plus, Save, User, Send, Folder, MoreHorizontal, Edit3, Copy, Loader2, X, Settings, LogOut, Moon, Sun, Check } from 'lucide-react';
 import './App.css'; 
 
 const CLIENT_ID = "997761035180-ho629l7o1e8ec1qhkmp6ona5mll5nbb5.apps.googleusercontent.com"; 
 
 function App() {
+  // --- [새로 추가할 변수들] ---
+  const [showProfileMenu, setShowProfileMenu] = useState(false); // 메뉴 열기/닫기
+  const [showSettingsModal, setShowSettingsModal] = useState(false); // 설정창 열기/닫기
+  const [theme, setTheme] = useState('dark'); // 테마 (기본 다크)
+  const [newNameInput, setNewNameInput] = useState(""); // 이름 변경 입력
+
+  // 테마 변경 효과 (body 태그에 클래스 붙이기)
+  useEffect(() => {
+    document.body.className = theme;
+  }, [theme]);
+
+  // 이름 변경 저장 함수
+  const handleUpdateName = () => {
+    if (!newNameInput.trim()) return;
+    const updatedUser = { ...user, name: newNameInput };
+    setUser(updatedUser);
+    localStorage.setItem('designBotUser', JSON.stringify(updatedUser));
+    setToast("이름이 변경되었습니다.");
+    setTimeout(() => setToast(null), 2000);
+  };
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem('designBotUser');
     return savedUser ? JSON.parse(savedUser) : null;
@@ -350,8 +370,46 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
   return (   
     
     <GoogleOAuthProvider clientId={CLIENT_ID}>
-    <div className="app-container">
+      
+    <div className="app-container ${theme}'}">
+      
       {toast && <div className="toast-notification"><Copy size={16} /> {toast}</div>}
+      {showSettingsModal && (
+          <div className="modal-overlay" onClick={() => setShowSettingsModal(false)}>
+            <div className="modal-content" onClick={e => e.stopPropagation()}>
+              <div className="modal-header">
+                <h3>⚙️ 설정</h3>
+                <button className="close-btn" onClick={() => setShowSettingsModal(false)}><X size={20}/></button>
+              </div>
+              
+              <div className="setting-section">
+                <label>내 프로필 편집</label>
+                <div className="input-group">
+                  <input 
+                    value={newNameInput} 
+                    onChange={e => setNewNameInput(e.target.value)} 
+                    placeholder={user?.name} 
+                  />
+                  <button onClick={handleUpdateName}><Check size={16}/> 저장</button>
+                </div>
+              </div>
+
+              <div className="setting-section">
+                <label>테마 설정</label>
+                <div className="theme-toggle">
+                  <button className={`theme-btn ${theme === 'light' ? 'active' : ''}`} onClick={() => setTheme('light')}>
+                    <Sun size={18} /> 라이트
+                  </button>
+                  <button className={`theme-btn ${theme === 'dark' ? 'active' : ''}`} onClick={() => setTheme('dark')}>
+                    <Moon size={18} /> 다크
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        {/* 👆 [여기까지] 설정 팝업창 코드 끝 */}
+      
 
       <div className="sidebar">
         <div className="sidebar-top">
@@ -425,24 +483,31 @@ const [renameInput, setRenameInput] = useState("");     // 수정할 이름 입�
   </div>
 </div>
         </div>
+        {/* 👇 프로필 영역 전체 교체 */}
         <div className="user-profile">
-          {/* 👇 유저가 없으면(!user) 로그인 버튼을 보여줘라! */}
           {!user ? (
-            <div style={{ display: 'flex', justifyContent: 'center', padding: '10px' }}>
-              <GoogleLogin 
-                onSuccess={handleLoginSuccess} 
-                onError={() => console.log('Login Failed')} 
-              />
-            </div>
+            <GoogleLogin onSuccess={handleLoginSuccess} onError={() => console.log('Fail')} />
           ) : (
-            // 👇 유저가 있으면 프로필을 보여줘라!
-            <>
-              <div className="user-info">
-                  {user.picture && <img src={user.picture} alt="p" />}
-                  <div className="user-text"><p>{user.name}</p></div>
+            <div className="profile-wrapper">
+              {/* 프로필 클릭 시 메뉴 토글 */}
+              <div className="user-info-box" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+                {user.picture ? <img src={user.picture} alt="u" /> : <div className="avatar-placeholder"><User/></div>}
+                <span className="user-name">{user.name}</span>
+                <Settings size={16} style={{marginLeft: 'auto', opacity: 0.5}}/>
               </div>
-              <button onClick={handleLogout} className="logout-btn">로그아웃</button>
-            </>
+
+              {/* 👇 클릭하면 뜨는 작은 메뉴 */}
+              {showProfileMenu && (
+                <div className="profile-dropdown">
+                  <button onClick={() => { setShowSettingsModal(true); setShowProfileMenu(false); }}>
+                    <Settings size={14} /> 설정
+                  </button>
+                  <button onClick={handleLogout} className="logout-opt">
+                    <LogOut size={14} /> 로그아웃
+                  </button>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
