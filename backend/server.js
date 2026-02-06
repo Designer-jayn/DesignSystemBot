@@ -46,20 +46,15 @@ findBestModel();
 // ---------------------------------------------------------
 // 📡 API 라우트
 // ---------------------------------------------------------
-// ... (위쪽 import 부분은 그대로 두세요) ...
 
-// ---------------------------------------------------------
-// 📡 API 라우트 (여기를 수정하세요!)
-// ---------------------------------------------------------
-
-// 1. 색상 이름 짓기 (AI + 고정 모드)
+// 1. [작명가 AI] 색상 이름 짓기 (창의성 0, 단답형)
 app.post('/api/ai-naming', async (req, res) => {
     const { hex } = req.body;
-    console.log(`🎨 요청 들어옴: ${hex}`); // 로그 추가
+    console.log(`🎨 작명 요청: ${hex}`);
 
     try {
         if (BEST_MODEL_URL) {
-            // 🔥 [핵심 수정 1] 프롬프트를 구체적으로 변경
+            // 📝 작명가 전용 프롬프트
             const prompt = `
                 You are a UI/UX Design Expert.
                 Analyze the HEX color code: ${hex}
@@ -76,36 +71,53 @@ app.post('/api/ai-naming', async (req, res) => {
                 BEST_MODEL_URL, 
                 { 
                     contents: [{ parts: [{ text: prompt }] }],
-                    // 🔥 [핵심 수정 2] temperature: 0 (창의성 끄기 -> 항상 같은 답 나옴)
                     generationConfig: {
-                        temperature: 0,
+                        temperature: 0, // 항상 같은 대답
                         maxOutputTokens: 20
                     }
                 }
             );
 
             const aiName = response.data.candidates[0].content.parts[0].text.trim().replace(/["'\n]/g, "");
-            
-            console.log(`🤖 AI 작명 성공: ${aiName}`); // 터미널에서 확인 가능!
+            console.log(`🤖 AI 작명: ${aiName}`);
             return res.json({ name: aiName });
         } 
         throw new Error("AI 연결 안됨");
     } catch (error) { 
-        // AI 실패 시 라이브러리 사용
         const names = namer(hex);
         const fallbackName = names.pantone[0].name;
-        console.log(`📚 AI 실패/라이브러리 사용: ${fallbackName}`); // 터미널에서 확인 가능!
+        console.log(`📚 라이브러리 작명: ${fallbackName}`);
         return res.json({ name: fallbackName }); 
     }
 });
 
-// 2. 채팅 기능 (기존 유지하되 로그 추가)
+// 2. [상담원 AI] 채팅 기능 (창의성 있음, 데이터 조회 가능)
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;
     try {
         if (BEST_MODEL_URL) {
-            // 채팅은 대화니까 창의성이 좀 있어도 됨 (temperature 설정 안 함)
-            const promptText = `당신은 UI/UX 디자인 시스템 전문가입니다... (생략) ...\n[질문] ${message}`;
+            // 📝 상담원 전용 프롬프트 (여기에 생략된 부분을 다 채워넣었습니다!)
+            const promptText = `
+                Role: 당신은 친절하고 전문적인 'UI/UX 디자인 시스템 컨설턴트'입니다.
+                
+                Context:
+                사용자는 현재 웹사이트에서 디자인 시스템(컬러, Spacing)을 관리하고 있습니다.
+                아래 JSON 데이터는 사용자가 현재 저장한 프로젝트 목록입니다.
+                
+                [사용자 데이터]
+                ${JSON.stringify(readData())}
+
+                [사용자 질문]
+                ${message}
+
+                Instructions:
+                1. 사용자의 질문에 대해 [사용자 데이터]를 참고하여 구체적으로 답변하세요.
+                (예: "현재 저장된 'Blue' 컬러와 어울리는..." 처럼 구체적으로 언급)
+                2. 데이터에 없는 내용은 일반적인 디자인 지식으로 답변하세요.
+                3. 말투는 정중하고, 전문 용어를 쉽게 풀어서 설명해주세요.
+                4. 답변은 한국어로 하세요.
+            `;
+
             const response = await axios.post(BEST_MODEL_URL, { contents: [{ parts: [{ text: promptText }] }] });
             
             console.log("🤖 채팅 응답 완료");
@@ -114,76 +126,25 @@ app.post('/api/chat', async (req, res) => {
         throw new Error("AI 연결 안됨");
     } catch (error) { 
         console.error("❌ 채팅 에러:", error.message);
-        return res.status(500).json({ response: "AI 연결 실패" }); 
+        return res.status(500).json({ response: "죄송합니다. AI 연결에 문제가 생겼어요." }); 
     }
 });
-
-// ... (나머지 프로젝트 저장, 경로 설정 코드는 그대로 두세요) ...
 
 app.get('/api/projects/:email', (req, res) => { res.json(readData()[req.params.email] || { "기본 프로젝트": [] }); });
 app.post('/api/projects', (req, res) => { const { email, projects } = req.body; const data = readData(); data[email] = projects; writeData(data); res.json({ success: true }); });
 
 
 // ---------------------------------------------------------
-// 🕵️‍♀️ [레이더 가동] 폴더 위치 추적 시스템 (여기가 핵심!)
-// ---------------------------------------------------------
-
-// 1. 현재 위치 파악 (서버가 어디서 돌고 있나?)
-const currentDir = __dirname;
-const parentDir = path.join(__dirname, '../'); // 한 칸 위
-
-// 2. 'web' 폴더 찾기 (부모 폴더에도 찾아보고, 현재 폴더에도 찾아봄)
-const webPathInParent = path.join(parentDir, 'web');
-const webPathInCurrent = path.join(currentDir, 'web');
-
-// 어디에 'web'이 있는지 확인
-let finalWebPath = null;
-if (fs.existsSync(webPathInParent)) {
-    finalWebPath = webPathInParent;
-} else if (fs.existsSync(webPathInCurrent)) {
-    finalWebPath = webPathInCurrent;
-}
-
-// // 3. 빌드 폴더(dist 또는 build) 찾기
-// let clientBuildPath = null;
-// if (finalWebPath) {
-//     const dist = path.join(finalWebPath, 'dist');
-//     const build = path.join(finalWebPath, 'build');
-    
-//     if (fs.existsSync(dist)) clientBuildPath = dist;
-//     else if (fs.existsSync(build)) clientBuildPath = build;
-// }
-
-
-// ▼▼▼ 이 코드로 해당 구역을 싹 덮어씌우세요! ▼▼▼
-
-// ---------------------------------------------------------
 // 🕵️‍♀️ [최종 해결] Railway용 경로 고정 설정
 // ---------------------------------------------------------
-
-// Railway 환경에서는 모든 파일이 /app 아래에 모입니다.
 const clientBuildPath = path.join(__dirname, '../web/build');
-
 console.log(`🍊 화면 파일 경로: ${clientBuildPath}`);
 
 app.use(express.static(clientBuildPath));
 app.use('/static', express.static(path.join(clientBuildPath, 'static')));
 
-// 핵심: 따옴표 '*' 대신 정규식을 써서 에러 방지
 app.get(/^(?!\/api).+/, (req, res) => {
     res.sendFile(path.join(clientBuildPath, 'index.html'));
-});
-
-// 5. [핵심 수정] 모든 요청 받아주기 (따옴표 대신 /.*/ 사용)
-app.get(/.*/, (req, res) => {
-    if (clientBuildPath) {
-        res.sendFile(path.join(clientBuildPath, 'index.html'));
-    } else {
-        res.status(404).send(`
-            <h1>🚧 화면 파일이 없어요!</h1>
-            <p>하지만 서버는 안 죽고 살아있습니다! (로그 확인 필요)</p>
-        `);
-    }
 });
 
 // ---------------------------------------------------------
